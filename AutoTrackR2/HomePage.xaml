@@ -1,0 +1,33 @@
+<UserControl x:Class="AutoTrackR2.HomePage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Height="396" Width="626">
+    <Grid Background="{DynamicResource BackgroundLightBrush}">
+        <!-- Main Layout Grid -->
+        <Grid Margin="0,0,5,7">
+            <Grid.RowDefinitions>
+                <!-- One row for the content, the other for buttons -->
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <!-- Left column for the main content area -->
+                <ColumnDefinition Width="*" />
+                <!-- Right column for the buttons -->
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Border for the kill feed section -->
+            <Border Grid.Row="0" Grid.Column="0" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="2" CornerRadius="10" Padding="10" Background="{DynamicResource BackgroundDarkBrush}" Margin="0,0,20,0">
+                <TextBlock Text="Kill Feed Goes Here..." FontSize="18" Foreground="{DynamicResource TextBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+
+            <!-- StackPanel for Start and Stop buttons -->
+            <StackPanel Grid.Row="0" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,0">
+                <Button Name="StartButton" Content="Start" Width="100" Height="40" Style="{StaticResource ButtonStyle}" FontFamily="{StaticResource Orbitron}" Margin="0,20"/>
+                    <Button Name="StopButton" Content="Stop" Width="100" Height="40" Style="{StaticResource DisabledButtonStyle}" FontFamily="{StaticResource Orbitron}" IsEnabled="False"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>
