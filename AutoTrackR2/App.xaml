@@ -20,7 +20,7 @@
         <SolidColorBrush x:Key="BackgroundDarkBrush" Color="{DynamicResource BackgroundDarkColor}" />
         <SolidColorBrush x:Key="BackgroundLightBrush" Color="{DynamicResource BackgroundLightColor}" />
 
-            <!-- Define the Style for Window -->
+        <!-- Define the Style for Window -->
         <Style TargetType="Window" x:Key="CustomWindowStyle">
             <Setter Property="Template">
                 <Setter.Value>
@@ -159,7 +159,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Slider">
-                        <Grid Width="90" Height="30" HorizontalAlignment="Left" Margin="58,-6,0,0">
+                        <Grid Width="120" Height="30" HorizontalAlignment="Left" Margin="58,-6,0,0">
                             <!-- Track Background -->
                             <Border Background="{DynamicResource BackgroundDarkBrush}" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="2" CornerRadius="15" Margin="0,0,-5,-4" />
 
@@ -273,5 +273,90 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!-- Modern Rounded ScrollBar Style -->
+        <Style TargetType="ScrollBar">
+            <Setter Property="Width" Value="5" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollBar">
+                        <Grid>
+                            <Track Name="PART_Track" IsDirectionReversed="true" Width="12" Margin="5,0,0,0">
+                                <!-- Decrease Repeat Button -->
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Background="Transparent" BorderBrush="Transparent" BorderThickness="0">
+                                        <RepeatButton.Template>
+                                            <ControlTemplate TargetType="RepeatButton">
+                                                <Grid x:Name="RepeatButtonGrid">
+                                                    <VisualStateManager.VisualStateGroups>
+                                                        <VisualStateGroup Name="CommonStates">
+                                                            <VisualState Name="Normal">
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity" Storyboard.TargetName="RepeatButtonGrid" To="1" Duration="0:0:0"/>
+                                                                </Storyboard>
+                                                            </VisualState>
+                                                            <VisualState Name="MouseOver">
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity" Storyboard.TargetName="RepeatButtonGrid" To="0" Duration="0:0:0.1"/>
+                                                                </Storyboard>
+                                                            </VisualState>
+                                                        </VisualStateGroup>
+                                                    </VisualStateManager.VisualStateGroups>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </RepeatButton.Template>
+                                    </RepeatButton>
+                                </Track.DecreaseRepeatButton>
+
+
+                                <!-- Thumb (Handle) -->
+                                <Track.Thumb>
+                                    <Thumb>
+                                        <Thumb.Template>
+                                            <ControlTemplate TargetType="Thumb">
+                                                <Grid>
+                                                    <Border
+                                                Background="{DynamicResource BackgroundBrush}"
+                                                BorderBrush="{DynamicResource AccentBrush}"
+                                                BorderThickness="2"
+                                                CornerRadius="3" />
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Thumb.Template>
+                                    </Thumb>
+                                </Track.Thumb>
+
+                                <!-- Increase Repeat Button -->
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Background="Transparent" BorderBrush="Transparent" BorderThickness="0">
+                                        <RepeatButton.Template>
+                                            <ControlTemplate TargetType="RepeatButton">
+                                                <Grid x:Name="RepeatButtonGrid">
+                                                    <VisualStateManager.VisualStateGroups>
+                                                        <VisualStateGroup Name="CommonStates">
+                                                            <VisualState Name="Normal">
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity" Storyboard.TargetName="RepeatButtonGrid" To="1" Duration="0:0:0"/>
+                                                                </Storyboard>
+                                                            </VisualState>
+                                                            <VisualState Name="MouseOver">
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity" Storyboard.TargetName="RepeatButtonGrid" To="0" Duration="0:0:0.1"/>
+                                                                </Storyboard>
+                                                            </VisualState>
+                                                        </VisualStateGroup>
+                                                    </VisualStateManager.VisualStateGroups>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </RepeatButton.Template>
+                                    </RepeatButton>
+                                </Track.IncreaseRepeatButton>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </Application.Resources>
 </Application>

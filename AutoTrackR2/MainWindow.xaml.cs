@@ -196,21 +196,21 @@ namespace AutoTrackR2
                 foreach (var line in File.ReadLines(configFilePath))
                 {
                     if (line.StartsWith("LogFile="))
-                        LogFile = line.Substring("LogFile=\"".Length).Trim('\"');
+                        LogFile = line.Substring("LogFile=".Length).Trim();
                     else if (line.StartsWith("ApiUrl="))
-                        ApiUrl = line.Substring("ApiUrl=\"".Length).Trim('\"');
+                        ApiUrl = line.Substring("ApiUrl=".Length).Trim();
                     else if (line.StartsWith("ApiKey="))
-                        ApiKey = line.Substring("ApiKey=\"".Length).Trim('\"');
+                        ApiKey = line.Substring("ApiKey=".Length).Trim();
                     else if (line.StartsWith("VideoPath="))
-                        VideoPath = line.Substring("VideoPath=\"".Length).Trim('\"');
+                        VideoPath = line.Substring("VideoPath=".Length).Trim();
                     else if (line.StartsWith("VisorWipe="))
-                        VisorWipe = int.Parse(line.Substring("VisorWipe=\"".Length).Trim('\"'));
+                        VisorWipe = int.Parse(line.Substring("VisorWipe=".Length).Trim());
                     else if (line.StartsWith("VideoRecord="))
-                        VideoRecord = int.Parse(line.Substring("VideoRecord=\"".Length).Trim('\"'));
+                        VideoRecord = int.Parse(line.Substring("VideoRecord=".Length).Trim());
                     else if (line.StartsWith("OfflineMode="))
-                        OfflineMode = int.Parse(line.Substring("OfflineMode=\"".Length).Trim('\"'));
+                        OfflineMode = int.Parse(line.Substring("OfflineMode=".Length).Trim());
                     else if (line.StartsWith("Theme="))
-                        Theme = int.Parse(line.Substring("Theme=\"".Length).Trim('\"'));
+                        Theme = int.Parse(line.Substring("Theme=".Length).Trim());
                 }
             }
         }

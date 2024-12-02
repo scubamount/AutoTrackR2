@@ -184,14 +184,23 @@ namespace AutoTrackR2
                     break;
                 case 6: // D3VL Theme
                     UpdateThemeColors(
-                        (Color)ColorConverter.ConvertFromString("#000000"), // Accent/Border (Bright Red)
+                        (Color)ColorConverter.ConvertFromString("#000000"), // Accent/Border
                         (Color)ColorConverter.ConvertFromString("#3E3E3E"), // Button
                         (Color)ColorConverter.ConvertFromString("#4C1C1C"), // Background
                         (Color)ColorConverter.ConvertFromString("#FF0000")  // Text
                     );
                     ChangeLogo("/Assets/D3VL.png", (Color)ColorConverter.ConvertFromString("#000000"));
                     break;
-                case 7: // VOX Theme
+                case 7: // HIT Theme
+                    UpdateThemeColors(
+                        (Color)ColorConverter.ConvertFromString("#000000"), // Accent/Border
+                        (Color)ColorConverter.ConvertFromString("#3E3E3E"), // Button
+                        (Color)ColorConverter.ConvertFromString("#4C1C1C"), // Background
+                        (Color)ColorConverter.ConvertFromString("#FF0000")  // Text
+                    );
+                    ChangeLogo("/Assets/HIT.png", (Color)ColorConverter.ConvertFromString("#fd2929"));
+                    break;
+                case 8: // VOX Theme
                     UpdateThemeColors(
                         (Color)ColorConverter.ConvertFromString("#C0C0C0"), // Accent/Border
                         (Color)ColorConverter.ConvertFromString("#1C1C1C"), // Button
@@ -200,7 +209,7 @@ namespace AutoTrackR2
                     );
                     ChangeLogo("/Assets/VOX.png", (Color)ColorConverter.ConvertFromString("#FFD700"));
                     break;
-                case 8: // EMP Theme
+                case 9: // EMP Theme
                     UpdateThemeColors(
                         (Color)ColorConverter.ConvertFromString("#F5721C"), // Accent/Border
                         (Color)ColorConverter.ConvertFromString("#535353"), // Button
@@ -322,14 +331,14 @@ namespace AutoTrackR2
 
             using (StreamWriter writer = new StreamWriter(configFilePath))
             {
-                writer.WriteLine($"LogFile=\"{LogFilePath.Text}\"");
-                writer.WriteLine($"ApiUrl=\"{ApiUrl.Text}\"");
-                writer.WriteLine($"ApiKey=\"{ApiKey.Text}\"");
-                writer.WriteLine($"VideoPath=\"{VideoPath.Text}\"");
-                writer.WriteLine($"VisorWipe=\"{(int)VisorWipeSlider.Value}\"");
-                writer.WriteLine($"VideoRecord=\"{(int)VideoRecordSlider.Value}\"");
-                writer.WriteLine($"OfflineMode=\"{(int)OfflineModeSlider.Value}\"");
-                writer.WriteLine($"Theme=\"{(int)ThemeSlider.Value}\""); // Assumes you are saving the theme slider value (0, 1, or 2)
+                writer.WriteLine($"LogFile={LogFilePath.Text}");
+                writer.WriteLine($"ApiUrl={ApiUrl.Text}");
+                writer.WriteLine($"ApiKey={ApiKey.Text}");
+                writer.WriteLine($"VideoPath={VideoPath.Text}");
+                writer.WriteLine($"VisorWipe={(int)VisorWipeSlider.Value}");
+                writer.WriteLine($"VideoRecord={(int)VideoRecordSlider.Value}");
+                writer.WriteLine($"OfflineMode={(int)OfflineModeSlider.Value}");
+                writer.WriteLine($"Theme={(int)ThemeSlider.Value}"); // Assumes you are saving the theme slider value (0, 1, or 2)
             }
 
             // Start the flashing effect

@@ -1,7 +1,9 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
+using System.IO;
 
 namespace AutoTrackR2
 {
@@ -53,5 +55,88 @@ namespace AutoTrackR2
                 StopButton.IsEnabled = false; // Disable Stop button
             }
         }
+
+        private void StartButton_Click(object sender, RoutedEventArgs e)
+        {
+            string scriptPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "KillTrackR_MainScript.ps1");
+            TailFileAsync(scriptPath);
+        }
+
+        private async void TailFileAsync(string scriptPath)
+        {
+            await Task.Run(() =>
+            {
+                try
+                {
+                    ProcessStartInfo psi = new ProcessStartInfo
+                    {
+                        FileName = "powershell.exe",
+                        Arguments = $"-NoProfile -ExecutionPolicy Bypass -File \"{scriptPath}\"",
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true
+                    };
+
+                    using (Process process = new Process { StartInfo = psi })
+                    {
+                        process.OutputDataReceived += (s, e) =>
+                        {
+                            if (!string.IsNullOrEmpty(e.Data))
+                            {
+                                Dispatcher.Invoke(() =>
+                                {
+                                    // Parse and display key-value pairs in the OutputTextBox
+                                    if (e.Data.Contains("PlayerName="))
+                                    {
+                                        string pilotName = e.Data.Split('=')[1].Trim();
+                                        PilotNameTextBox.Text = pilotName; // Update the Button's Content
+                                    }
+                                    else if (e.Data.Contains("PlayerShip="))
+                                    {
+                                        string playerShip = e.Data.Split('=')[1].Trim();
+                                        PlayerShipTextBox.Text = playerShip;
+                                    }
+                                    else if (e.Data.Contains("GameMode="))
+                                    {
+                                        string gameMode = e.Data.Split('=')[1].Trim();
+                                        GameModeTextBox.Text = gameMode;
+                                    }
+                                    else
+                                    {
+                                        OutputTextBox.AppendText(e.Data + Environment.NewLine);
+                                    }
+                                });
+                            }
+                        };
+
+                        process.ErrorDataReceived += (s, e) =>
+                        {
+                            if (!string.IsNullOrEmpty(e.Data))
+                            {
+                                Dispatcher.Invoke(() =>
+                                {
+                                    OutputTextBox.AppendText("Error: " + e.Data + Environment.NewLine);
+                                });
+                            }
+                        };
+
+                        process.Start();
+                        process.BeginOutputReadLine();
+                        process.BeginErrorReadLine();
+
+                        process.WaitForExit();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        MessageBox.Show($"Error running script: {ex.Message}");
+                    });
+                }
+            });
+        }
+
     }
 }
