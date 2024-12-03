@@ -30,11 +30,11 @@
             <Border Background="{DynamicResource BackgroundDarkBrush}" BorderBrush="{DynamicResource AccentBrush}" Grid.Row="0" Grid.Column="1" BorderThickness="2" CornerRadius="5" Margin="0,0,0,134"/>
             <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Height="269" Width="152">
                 <TextBlock Name="PilotNameTitle" Text="Pilot" Width="152" Height="20" Background="Transparent" FontFamily="{StaticResource Orbitron}" Margin="0,5,0,0" Foreground="{DynamicResource AltTextBrush}" FontSize="14"/>
-                <TextBlock Name="PilotNameTextBox" Width="152" Height="20" Background="Transparent" FontFamily="{StaticResource Orbitron}" Margin="0,0,0,0" Foreground="{DynamicResource TextBrush}" FontSize="11" TextAlignment="Center"/>
+                <TextBlock Name="PilotNameTextBox" Text="" Width="152" Height="20" Background="Transparent" FontFamily="{StaticResource Orbitron}" Margin="0,0,0,0" Foreground="{DynamicResource TextBrush}" FontSize="11" TextAlignment="Center"/>
                 <TextBlock Name="PlayerShipTitle" Text="Ship" Width="152" Height="20" Background="Transparent" FontFamily="{StaticResource Orbitron}" Margin="0,5,0,0" Foreground="{DynamicResource AltTextBrush}" FontSize="14" />
-                <TextBlock Name="PlayerShipTextBox" Width="152" Height="20" Background="Transparent" FontFamily="{StaticResource Orbitron}" Margin="0,0,0,0" Foreground="{DynamicResource TextBrush}" FontSize="11" TextAlignment="Center"/>
+                <TextBlock Name="PlayerShipTextBox" Text="" Width="152" Height="20" Background="Transparent" FontFamily="{StaticResource Orbitron}" Margin="0,0,0,0" Foreground="{DynamicResource TextBrush}" FontSize="11" TextAlignment="Center"/>
                 <TextBlock Name="GameModeTitle" Text="Game Mode" Width="152" Height="20" Background="Transparent" FontFamily="{StaticResource Orbitron}" Margin="0,5,0,0" Foreground="{DynamicResource AltTextBrush}" FontSize="14"/>
-                <TextBlock Name="GameModeTextBox" Width="152" Height="20" Background="Transparent" FontFamily="{StaticResource Orbitron}" Margin="0,0,0,0" Foreground="{DynamicResource TextBrush}" FontSize="11" TextAlignment="Center"/>
+                <TextBlock Name="GameModeTextBox" Text="" Width="152" Height="20" Background="Transparent" FontFamily="{StaticResource Orbitron}" Margin="0,0,0,0" Foreground="{DynamicResource TextBrush}" FontSize="11" TextAlignment="Center"/>
             </StackPanel>
             <StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Height="120" Width="172" >
                 <Button Name="StartButton" Content="Start" Width="100" Height="40" Style="{StaticResource ButtonStyle}" FontFamily="{StaticResource Orbitron}" Margin="0,20" Click="StartButton_Click"/>
