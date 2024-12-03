@@ -128,7 +128,7 @@ namespace AutoTrackR2
                         tabButton.Effect = new DropShadowEffect
                         {
                             Color = accentColor,
-                            BlurRadius = 20,       // Adjust blur radius for desired glow intensity
+                            BlurRadius = 30,       // Adjust blur radius for desired glow intensity
                             ShadowDepth = 0,      // Set shadow depth to 0 for a pure glow effect
                             Opacity = 1,        // Set opacity for glow visibility
                             Direction = 0         // Direction doesn't matter for glow

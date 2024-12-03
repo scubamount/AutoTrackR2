@@ -14,11 +14,13 @@
         <Color x:Key="BackgroundDarkColor">#0F1A2B</Color>
         <Color x:Key="BackgroundLightColor">#1D2D44</Color>
         <Color x:Key="TextColor">#FFFFFF</Color>
+        <Color x:Key="AltTextColor">#A88F2C</Color>
 
         <SolidColorBrush x:Key="TextBrush" Color="{DynamicResource TextColor}" />
         <SolidColorBrush x:Key="AccentBrush" Color="{DynamicResource AccentColor}" />
         <SolidColorBrush x:Key="BackgroundDarkBrush" Color="{DynamicResource BackgroundDarkColor}" />
         <SolidColorBrush x:Key="BackgroundLightBrush" Color="{DynamicResource BackgroundLightColor}" />
+        <SolidColorBrush x:Key="AltTextBrush" Color="{DynamicResource AltTextColor}" />
 
         <!-- Define the Style for Window -->
         <Style TargetType="Window" x:Key="CustomWindowStyle">

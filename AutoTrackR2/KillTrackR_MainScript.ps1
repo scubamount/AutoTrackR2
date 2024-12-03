@@ -1,10 +1,12 @@
-﻿# Path to the config file
+﻿$TrackRver = "2.0"
+
+# Path to the config file
 $scriptFolder = Split-Path -Parent $MyInvocation.MyCommand.Path
 $configFile = Join-Path -Path $scriptFolder -ChildPath "config.ini"
 
 # Read the config file into a hashtable
 if (Test-Path $configFile) {
-    Write-Output "Config.ini found."
+    Write-Output "PlayerName=Config.ini found."
     $configContent = Get-Content $configFile | Where-Object { $_ -notmatch '^#|^\s*$' }
 
     # Escape backslashes by doubling them
@@ -13,20 +15,12 @@ if (Test-Path $configFile) {
     # Convert to key-value pairs
     $config = $configContent -replace '^([^=]+)=(.+)$', '$1=$2' | ConvertFrom-StringData
 } else {
-    Write-Output "Config.ini not found."
+    Write-Output "PlayerName=Config.ini not found."
     exit
 }
 
-$PlayerName = "Immersion_Breaker"
-$PlayerShip = "ANVL_F7A_Mk2"
-$GameMode = "PU"
-
-Write-Output "PlayerName=$PlayerName"
-Write-Output "PlayerShip=$PlayerShip"
-Write-Output "GameMode=$GameMode"
-
 # Access config values
-$logFile = $config.Logfile
+$logFilePath = $config.Logfile
 $apiUrl = $config.ApiUrl
 $apiKey = $config.ApiKey
 $videoPath = $config.VideoPath
@@ -46,15 +40,18 @@ if ($videoRecord -eq 1){
 	$videoRecord = $false
 }
 
-$logfileContent = Get-Content $logFile
-
-If (Test-Path $logFile) {
-	Write-Output "Logfile found."
+if ($visorWipe -eq 1){
+	$visorWipe = $true
 } else {
-	Write-Output "Logfile not found."
+	$visorWipe = $false
 }
 
-Write-Output $logfileContent
+If (Test-Path $logFilePath) {
+	Write-Output "PlayerName=Logfile found"
+} else {
+	Write-Output "PlayerName=Logfile not found."
+}
+
 <# Define the regex pattern to extract information
 $killPattern = "<Actor Death> CActor::Kill: '(?<EnemyPilot>[^']+)' \[\d+\] in zone '(?<EnemyShip>[^']+)' killed by '(?<Player>[^']+)' \[[^']+\] using '(?<Weapon>[^']+)' \[Class (?<Class>[^\]]+)\] with damage type '(?<DamageType>[^']+)'"
 $puPattern = '<\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z> \[Notice\] <ContextEstablisherTaskFinished> establisher="CReplicationModel" message="CET completed" taskname="StopLoadingScreen" state=[^ ]+ status="Finished" runningTime=\d+\.\d+ numRuns=\d+ map="megamap" gamerules="SC_Default" sessionId="[a-f0-9\-]+" \[Team_Network\]\[Network\]\[Replication\]\[Loading\]\[Persistence\]'
@@ -63,6 +60,7 @@ $loadoutPattern = '\[InstancedInterior\] OnEntityLeaveZone - InstancedInterior \
 # $loginPattern = "\[Notice\] <AccountLoginCharacterStatus_Character> Character: createdAt [A-Za-z0-9]+ - updatedAt [A-Za-z0-9]+ - geid [A-Za-z0-9]+ - accountId [A-Za-z0-9]+ - name (?<Player>[A-Za-z0-9_-]+) - state STATE_CURRENT" # KEEP THIS INCASE LEGACY LOGIN IS REMOVED 
 $loginPattern = "\[Notice\] <Legacy login response> \[CIG-net\] User Login Success - Handle\[(?<Player>[A-Za-z0-9_-]+)\]"
 $cleanupPattern = '^(.+?)_\d+$'
+$versionPattern = "--system-trace-env-id='pub-sc-alpha-(?<gameversion>\d{4}-\d{7})'"
 
 # Lookup Patterns
 $joinDatePattern = '<span class="label">Enlisted</span>\s*<strong class="value">([^<]+)</strong>'
@@ -71,21 +69,77 @@ $ueePattern = '<p class="entry citizen-record">\s*<span class="label">UEE Citize
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-# Function to process new log entries and write to the host
+# Match and extract username from gamelog
+Do {
+    # Load gamelog into memory
+    $authLog = Get-Content -Path $logFilePath
+
+    # Initialize variable to store username
+    $global:userName = $null
+	$global:loadOut = $null
+
+    # Loop through each line in the log to find the matching line
+    foreach ($line in $authLog) {
+        if ($line -match $loginPattern) {
+            $global:userName = $matches['Player']
+            Write-Output "PlayerName=$global:userName"
+            break
+        }
+	}
+
+	# Get Loadout
+	foreach ($line in $authLog) {
+		if ($line -match $loadoutPattern){
+			$entity = $matches['Entity']
+			$ownerGEID = $matches['OwnerGEID']
+
+			If ($ownerGEID -eq $global:userName -and $entity -notlike "*SoundListener*" -and $entity -notlike "*StreamingSOC*" -and $entity -ne $global:userName -and $entity -notlike "*debris*") {
+				$global:loadOut = $entity
+				If ($global:loadOut -match $cleanupPattern){
+					$global:loadOut = $matches[1]
+				}	
+			} 
+		}
+    }
+	Write-Output "PlayerShip=$global:loadOut"
+
+	# Get gameVersion
+	Foreach ($line in $authlog){
+		If ($line -match $versionPattern){
+			$GameVersion = $matches[gameversion]
+		}
+		if ($line -match $acPattern){
+			$GameMode = "AC"
+		}
+		if ($line -match $puPattern){
+			$GameMode = "PU"
+		}
+	}
+
+    # If no match found, print "Logged In: False"
+    if (-not $global:userName) {
+        Start-Sleep -Seconds 30
+    }
+
+    # Clear the log from memory
+    $authLog = $null
+} until ($null -ne $global:userName)
+
+<# Function to process new log entries and write to the host
 function Read-LogEntry {
     param (
         [string]$line
     )
     
     # Apply the regex pattern to the line
-    if ($line -match $killPattern -and $global:logStart -eq $TRUE) {
+    if ($line -match $killPattern) {
         # Access the named capture groups from the regex match
         $enemyPilot = $matches['EnemyPilot']
         $enemyShip = $matches['EnemyShip']
         $player = $matches['Player']
-	$weapon = $matches['Weapon']
-	$damageType = $matches['DamageType']
-	$ship = $global:loadOut
+		$weapon = $matches['Weapon']
+		$damageType = $matches['DamageType']
+		$ship = $global:loadOut
 	
 	If ($enemyShip -eq $global:lastKill){
 		$enemyShip = "Passenger"
@@ -164,13 +218,9 @@ function Read-LogEntry {
 				$citizenRecordAPI = $citizenRecord
 			}
 
-			# Cleanup Output
-			$textColor = "Green"
-			$killText = "Congratulations!"
-
 			# Send to API
 			# Define the data to send
-			If ($apiDetected -eq $true -and $urlDetected -eq $true){
+			If ($apiUrl -eq $true -and $offlineMode -eq $false){
 				$data = @{
 					victim_ship = $enemyShip
 					victim = $enemyPilot
@@ -179,7 +229,9 @@ function Read-LogEntry {
 					weapon = $weapon
 					method = $damageType
 					loadout_ship = $ship
-					#version = $version
+					gameVersion = $GameVersion
+					gameMode = $GameMode
+					trackrVersion = $TrackRver
 				}
 
 				# Headers which may or may not be necessary
@@ -192,60 +244,44 @@ function Read-LogEntry {
 				try {
 					# Send the POST request with JSON data
 					Invoke-RestMethod -Uri $apiURL -Method Post -Body ($data | ConvertTo-Json -Depth 5) -Headers $headers
+					$logMode = "API"
 				} catch {
 					# Catch and display errors
-					Write-Output "Error: $($_)" -ForegroundColor red
-					Write-output "Send error to devs"
-					Write-Output "Kill saved in $outputPath"
 					$apiError = $_
 					# Add to output file
-					Add-Content -Path $outputPath -value $($_)
+					Add-Content -Path "$scriptFolder\kill-log.csv" -value $($_)
+					$logMode = "Err-Local"
 				}
+			} Else {
+				$logMode = "Local"
+			}
+			
+			# Define the output CSV path
+			$csvPath = "$scriptFolder\Kill-log.csv"
+
+			# Create an object to hold the data
+			$killData = New-Object PSObject -property @{
+				KillTime         = $killTime
+				EnemyPilot       = $enemyPilot
+				EnemyShip        = $enemyShip
+				Enlisted         = $joinDate
+				RecordNumber     = $citizenRecord
+				OrgAffiliation   = $enemyOrgs[0]
+				Player           = $player
+				Weapon           = $weapon
+				Ship             = $ship
+				Method           = $damageType
+				Mode             = $GameMode
+				GameVersion      = $GameVersion
+				TrackRver		 = $TrackRver
 			}
 
-			# Write-Output to console
-			write-host "=== $killText" -ForegroundColor $textColor
-			Write-Host "$killTime"
-			Write-Host "Enemy Pilot: " -NoNewLine -ForegroundColor $textColor
-			Write-Host "$enemyPilot"
-			Write-Host "Enemy Ship: " -NoNewLine -ForegroundColor $textColor
-			Write-Host "$enemyShip"
-			Write-Host "Enlisted: " -NoNewLine -ForegroundColor $textColor
-			Write-Host "$joinDate"
-			Write-Host "Record #: " -NoNewLine -ForegroundColor $textColor
-			Write-Host "$citizenRecord"
-			Write-Host "Org Affiliation: " -NoNewLine -ForegroundColor $textColor
-			ForEach ($org in $enemyOrgs){
-				Write-Host $org
-			}
-			Write-Host "Player: " -NoNewLine -ForegroundColor $textColor
-			Write-Host "$player"
-			Write-Host "Weapon: " -NoNewLine -ForegroundColor $textColor
-			Write-Host "$weapon"
-			Write-Host "Ship: " -NoNewLine -ForegroundColor $textColor
-			Write-Host "$ship"s
-			Write-Host "Method: " -NoNewLine -ForegroundColor $textColor
-			Write-Host "$damageType"
-			Write-Host "-------------------------"	
-			
-			# Write output to local log
-			If ($apiDetected -eq $false -or $urlDetected -eq $false -or $null -ne $apiError){
-				Add-Content -Path $outputPath -Value "=== $killText"
-				Add-Content -Path $outputPath -Value "$killTime"
-				Add-Content -Path $outputPath -Value "Enemy Pilot: $enemyPilot"
-				Add-Content -Path $outputPath -Value "Enemy Ship: $enemyShip"
-				Add-Content -Path $outputPath -Value "Enlisted: $joinDate"
-				Add-Content -Path $outputPath -Value "Record #: $citizenRecord"
-				Add-Content -Path $outputPath -Value "Org Affiliation: " -NoNewLine
-				ForEach ($org in $enemyOrgs){
-					Add-Content -Path $outputPath -Value $org
-				}
-				Add-Content -Path $outputPath -Value "Player: $player"
-				Add-Content -Path $outputPath -Value "Weapon: $weapon"
-				Add-Content -Path $outputPath -Value "Ship: $ship"
-				Add-Content -Path $outputPath -Value "Method: $damageType"
-				Add-Content -Path $outputPath -Value "-------------------------"
-			}
+			Write-Output "NewKill=break,$enemyPilot,$enemyShip,$($enemyOrgs[0]),$joinDate,$citizenRecord,$killTime"
+
+			# Export the object to a CSV
+			# If the CSV file does not exist, it will create a new file with headers.
+			# If the file already exists, it will append the data.
+			$killData | Export-Csv -Path $csvPath -Append -NoTypeInformation
 
 			$sleeptimer = 10
 
@@ -254,7 +290,7 @@ function Read-LogEntry {
 				# send keybind for visorwipe
 				start-sleep 1
 				$sleeptimer = $sleeptimer -1
-				&$visorPath
+				&"$scriptFolder\visorwipe.ahk"
 			}
 			
 			# Record video
@@ -262,19 +298,24 @@ function Read-LogEntry {
 				# send keybind for windows game bar recording
 				Start-Sleep 2
 				$sleeptimer = $sleeptimer -9
-				&$recordPath
-				Write-Host "=== Kill Clipped!" -ForegroundColor Green
-				Write-Host "-------------------------"
+				&"$scriptFolder\videorecord.ahk"
 				Start-Sleep 7
 
-				# 
 				$latestFile = Get-ChildItem -Path $videoPath | Where-Object { -not $_.PSIsContainer } | Sort-Object CreationTime -Descending | Select-Object -First 1
-				# Generate a timestamp in ddMMMyyyy-HH:mm format
-				$timestamp = (Get-Date).ToString("ddMMMyyyy-HHmm")
-				# Rename the file if it exists
+				# Check if the latest file is no more than 10 seconds old
 				if ($latestFile) {
-					Rename-Item -Path $latestFile.FullName -NewName "$enemyPilot.$enemyShip.$timestamp.mp4"
-				}
+					$fileAgeInSeconds = (New-TimeSpan -Start $latestFile.CreationTime -End (Get-Date)).TotalSeconds
+					if ($fileAgeInSeconds -le 10) {
+						# Generate a timestamp in ddMMMyyyy-HH:mm format
+						$timestamp = (Get-Date).ToString("ddMMMyyyy-HHmm")
+        
+						# Extract the file extension to preserve it
+						$fileExtension = $latestFile.Extension
+
+						# Rename the file, preserving the original file extension
+						Rename-Item -Path $latestFile.FullName -NewName "$enemyPilot.$enemyShip.$timestamp$fileExtension"
+					} else {}
+				} else {}
 			}
 			Start-Sleep $sleeptimer
 		}
@@ -292,21 +333,18 @@ function Read-LogEntry {
 
 		If ($authLog -match $nameExtract -and $global:userName -ne $nameExtract){
 			$global:userName = $matches['PlayerName']
-			Write-Host "Logged in as $global:userName" -ForegroundColor Green
-			Write-Host "-------------------------"
+			Write-Output "PlayerName=$global:userName"
 		}
 	}
 
 	# Detect PU or AC
-	if ($line -match $puPattern -and $global:logStart -eq $FALSE) {
-		$global:logStart = $TRUE
-		Write-Host "=== Logging: $global:logStart" -ForegroundColor Green
-		Write-Host "-------------------------"
+	if ($line -match $puPattern) {
+		$GameMode = "PU"
+		Write-Output "GameMode=$GameMode"
 	}
-	if ($line -match $acPattern -and $global:logStart -eq $TRUE) {
-		$global:logStart = $FALSE
-		Write-Host "=== Logging: $global:logStart" -ForegroundColor Red
-		Write-Host "-------------------------"
+	if ($line -match $acPattern) {
+		$GameMode = "AC"
+		Write-Output "GameMode=$GameMode"
 	}
 
 	#Set loadout 
@@ -314,14 +352,12 @@ function Read-LogEntry {
 		$entity = $matches['Entity']
 		$ownerGEID = $matches['OwnerGEID']
 
-        If ($ownerGEID -eq $global:userName -and $entity -notlike "*SoundListener*" -and $entity -notlike "*StreamingSOC*" -and $entity -ne $global:userName) {
+        If ($ownerGEID -eq $global:userName -and $entity -notlike "*SoundListener*" -and $entity -notlike "*StreamingSOC*" -and $entity -ne $global:userName -and $entity -notlike "*debris*") {
 			$global:loadOut = $entity
 			If ($global:loadOut -match $cleanupPattern){
 				$global:loadOut = $matches[1]
 			}
-			Write-Host "=== Loadout: $global:loadOut" -ForegroundColor Yellow
-			Write-Host "-------------------------"
-			
+			Write-Output "PlayerShip=$global:loadOut"
 		}
 	}
 }
@@ -330,4 +366,3 @@ function Read-LogEntry {
 Get-Content -Path $logFile -Wait -Tail 0 | ForEach-Object {
     Read-LogEntry $_
 }
-#>

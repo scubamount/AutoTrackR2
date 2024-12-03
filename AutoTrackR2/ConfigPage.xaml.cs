@@ -133,52 +133,58 @@ namespace AutoTrackR2
                         (Color)ColorConverter.ConvertFromString("#00A9E0"), // Accent/Border
                         (Color)ColorConverter.ConvertFromString("#0F1A2B"), // Button
                         (Color)ColorConverter.ConvertFromString("#1D2D44"), // Background
-                        (Color)ColorConverter.ConvertFromString("#FFFFFF")  // Text
+                        (Color)ColorConverter.ConvertFromString("#FFFFFF"), // Text
+                        (Color)ColorConverter.ConvertFromString("#A88F2C")  // AltText
                     );
                     ChangeLogo("/Assets/AutoTrackR.png");
                     break;
                 case 1: // Green Theme
                     UpdateThemeColors(
-                         (Color)ColorConverter.ConvertFromString("#1D9F00"), // Accent/Border
-                         (Color)ColorConverter.ConvertFromString("#262424"), // Button
-                         (Color)ColorConverter.ConvertFromString("#072501"), // Background
-                         (Color)ColorConverter.ConvertFromString("#D7AF3C")  // Text
+                        (Color)ColorConverter.ConvertFromString("#1D9F00"), // Accent/Border
+                        (Color)ColorConverter.ConvertFromString("#262424"), // Button
+                        (Color)ColorConverter.ConvertFromString("#072501"), // Background
+                        (Color)ColorConverter.ConvertFromString("#D7AF3C"), // Text
+                        (Color)ColorConverter.ConvertFromString("#DCD6C4")  // AltText
                     );
                     ChangeLogo("/Assets/AutoTrackR.png");
                     break;
                 case 2: // Red Theme
                     UpdateThemeColors(
-                         (Color)ColorConverter.ConvertFromString("#D32F2F"), // Accent/Border
-                         (Color)ColorConverter.ConvertFromString("#424242"), // Button
-                         (Color)ColorConverter.ConvertFromString("#212121"), // Light Background
-                         (Color)ColorConverter.ConvertFromString("#E0E0E0")  // Text
+                        (Color)ColorConverter.ConvertFromString("#D32F2F"), // Accent/Border
+                        (Color)ColorConverter.ConvertFromString("#424242"), // Button
+                        (Color)ColorConverter.ConvertFromString("#212121"), // Light Background
+                        (Color)ColorConverter.ConvertFromString("#E0E0E0"), // Text
+                        (Color)ColorConverter.ConvertFromString("#A88F2C")  // AltText
                     );
                     ChangeLogo("/Assets/AutoTrackR.png");
                     break;
                 case 3: // Purple Theme
                     UpdateThemeColors(
-                         (Color)ColorConverter.ConvertFromString("#32CD32"), // Accent/Border
-                         (Color)ColorConverter.ConvertFromString("#33065F"), // Button
-                         (Color)ColorConverter.ConvertFromString("#43065F"), // Background
-                         (Color)ColorConverter.ConvertFromString("#00FF00")  // Text
+                        (Color)ColorConverter.ConvertFromString("#32CD32"), // Accent/Border
+                        (Color)ColorConverter.ConvertFromString("#33065F"), // Button
+                        (Color)ColorConverter.ConvertFromString("#43065F"), // Background
+                        (Color)ColorConverter.ConvertFromString("#00FF00"), // Text
+                        (Color)ColorConverter.ConvertFromString("#B3976E")  // AltText
                     );
                     ChangeLogo("/Assets/AutoTrackR.png");
                     break;
                 case 4: // GN Theme
                     UpdateThemeColors(
-                         (Color)ColorConverter.ConvertFromString("#FF0000"), // Accent/Border
-                         (Color)ColorConverter.ConvertFromString("#1C1C1C"), // Button
-                         (Color)ColorConverter.ConvertFromString("#000000"), // Background
-                         (Color)ColorConverter.ConvertFromString("#FBC603")  // Text
+                        (Color)ColorConverter.ConvertFromString("#FF0000"), // Accent/Border
+                        (Color)ColorConverter.ConvertFromString("#1C1C1C"), // Button
+                        (Color)ColorConverter.ConvertFromString("#000000"), // Background
+                        (Color)ColorConverter.ConvertFromString("#FBC603"), // Text
+                        (Color)ColorConverter.ConvertFromString("#BFA8A6")  // AltText
                     );
                     ChangeLogo("/Assets/GN.png", (Color)ColorConverter.ConvertFromString("#FF0000"));
                     break;
                 case 5: // NW Theme
                     UpdateThemeColors(
-                         (Color)ColorConverter.ConvertFromString("#B92D2D"), // Accent/Border
-                         (Color)ColorConverter.ConvertFromString("#1C1C1C"), // Button
-                         (Color)ColorConverter.ConvertFromString("#262424"), // Background
-                         (Color)ColorConverter.ConvertFromString("#01DDDA")  // Text
+                        (Color)ColorConverter.ConvertFromString("#B92D2D"), // Accent/Border
+                        (Color)ColorConverter.ConvertFromString("#1C1C1C"), // Button
+                        (Color)ColorConverter.ConvertFromString("#262424"), // Background
+                        (Color)ColorConverter.ConvertFromString("#01DDDA"), // Text
+                        (Color)ColorConverter.ConvertFromString("#A88F2C")  // AltText
                     );
                     ChangeLogo("/Assets/NW.png", (Color)ColorConverter.ConvertFromString("#01DDDA"));
                     break;
@@ -187,25 +193,28 @@ namespace AutoTrackR2
                         (Color)ColorConverter.ConvertFromString("#000000"), // Accent/Border
                         (Color)ColorConverter.ConvertFromString("#3E3E3E"), // Button
                         (Color)ColorConverter.ConvertFromString("#4C1C1C"), // Background
-                        (Color)ColorConverter.ConvertFromString("#FF0000")  // Text
+                        (Color)ColorConverter.ConvertFromString("#FF0000"), // Text
+                        (Color)ColorConverter.ConvertFromString("#A88F2C")  // AltText
                     );
                     ChangeLogo("/Assets/D3VL.png", (Color)ColorConverter.ConvertFromString("#000000"));
                     break;
                 case 7: // HIT Theme
                     UpdateThemeColors(
-                        (Color)ColorConverter.ConvertFromString("#000000"), // Accent/Border
-                        (Color)ColorConverter.ConvertFromString("#3E3E3E"), // Button
-                        (Color)ColorConverter.ConvertFromString("#4C1C1C"), // Background
-                        (Color)ColorConverter.ConvertFromString("#FF0000")  // Text
+                        (Color)ColorConverter.ConvertFromString("#B92D2D"), // Accent/Border
+                        (Color)ColorConverter.ConvertFromString("#1C1C1C"), // Button
+                        (Color)ColorConverter.ConvertFromString("#262424"), // Background
+                        (Color)ColorConverter.ConvertFromString("#7d7d7d"), // Text
+                        (Color)ColorConverter.ConvertFromString("#A88F2C")  // AltText
                     );
-                    ChangeLogo("/Assets/HIT.png", (Color)ColorConverter.ConvertFromString("#fd2929"));
+                    ChangeLogo("/Assets/HIT.png");
                     break;
                 case 8: // VOX Theme
                     UpdateThemeColors(
                         (Color)ColorConverter.ConvertFromString("#C0C0C0"), // Accent/Border
                         (Color)ColorConverter.ConvertFromString("#1C1C1C"), // Button
                         (Color)ColorConverter.ConvertFromString("#424242"), // Background
-                        (Color)ColorConverter.ConvertFromString("#FFD700")  // Text
+                        (Color)ColorConverter.ConvertFromString("#FFD700"), // Text
+                        (Color)ColorConverter.ConvertFromString("#817E79")  // AltText
                     );
                     ChangeLogo("/Assets/VOX.png", (Color)ColorConverter.ConvertFromString("#FFD700"));
                     break;
@@ -214,7 +223,8 @@ namespace AutoTrackR2
                         (Color)ColorConverter.ConvertFromString("#F5721C"), // Accent/Border
                         (Color)ColorConverter.ConvertFromString("#535353"), // Button
                         (Color)ColorConverter.ConvertFromString("#080000"), // Background
-                        (Color)ColorConverter.ConvertFromString("#FFFFFF")  // Text
+                        (Color)ColorConverter.ConvertFromString("#FFFFFF"), // Text
+                        (Color)ColorConverter.ConvertFromString("#CEA75B")  // AltText
                     );
                     ChangeLogo("/Assets/EMP.png", (Color)ColorConverter.ConvertFromString("#F3BD9B"));
                     break;
@@ -222,19 +232,21 @@ namespace AutoTrackR2
         }
 
         // Helper method to update both Color and Brush resources
-        private void UpdateThemeColors(Color accent, Color backgroundDark, Color backgroundLight, Color text)
+        private void UpdateThemeColors(Color accent, Color backgroundDark, Color backgroundLight, Color text, Color altText)
         {
             // Update color resources
             Application.Current.Resources["AccentColor"] = accent;
             Application.Current.Resources["BackgroundDarkColor"] = backgroundDark;
             Application.Current.Resources["BackgroundLightColor"] = backgroundLight;
             Application.Current.Resources["TextColor"] = text;
+            Application.Current.Resources["AltTextColor"] = altText;
 
             // Update SolidColorBrush resources
             Application.Current.Resources["AccentBrush"] = new SolidColorBrush(accent);
             Application.Current.Resources["BackgroundDarkBrush"] = new SolidColorBrush(backgroundDark);
             Application.Current.Resources["BackgroundLightBrush"] = new SolidColorBrush(backgroundLight);
             Application.Current.Resources["TextBrush"] = new SolidColorBrush(text);
+            Application.Current.Resources["AltTextBrush"] = new SolidColorBrush(altText);
         }
 
         // This method will be called when switching tabs to restore the saved slider position.

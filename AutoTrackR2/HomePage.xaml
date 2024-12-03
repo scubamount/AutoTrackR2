@@ -19,24 +19,26 @@
             </Grid.ColumnDefinitions>
 
             <!-- Border for the kill feed section -->
-            <TextBox Name="OutputTextBox" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Height="NaN" Margin="0,0,20,0" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" IsReadOnly="True" Style="{StaticResource RoundedTextBox}"/>
-            <!-- Border Grid.Row="0" Grid.Column="0" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="2" CornerRadius="10" Padding="10" Background="{DynamicResource BackgroundDarkBrush}" Margin="0,0,20,0">
-                <TextBlock Text="Kill Feed Goes Here..." FontSize="18" Foreground="{DynamicResource TextBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-            </Border -->
+            <!--TextBox Name="OutputTextBox" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Height="NaN" Margin="0,0,20,0" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" IsReadOnly="True" Style="{StaticResource RoundedTextBox}"/-->
+            <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="2" CornerRadius="10" Padding="0" Background="{DynamicResource BackgroundDarkBrush}" Margin="0,0,20,0">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Name="KillFeedStackPanel" Orientation="Vertical" Height="384" Width="407"/>
+                </ScrollViewer>
+            </Border>
 
             <!-- StackPanel for Start and Stop buttons -->
             <Border Background="{DynamicResource BackgroundDarkBrush}" BorderBrush="{DynamicResource AccentBrush}" Grid.Row="0" Grid.Column="1" BorderThickness="2" CornerRadius="5" Margin="0,0,0,134"/>
             <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Height="269" Width="152">
-                <TextBlock Name="PilotNameTitle" Text="Pilot" Width="152" Height="20" Background="Transparent" FontFamily="{StaticResource Orbitron}" Margin="0,5,0,0" Foreground="{DynamicResource AccentBrush}" FontSize="14"/>
-                <TextBlock Name="PilotNameTextBox" Text="X" Width="152" Height="20" Background="Transparent" FontFamily="{StaticResource Orbitron}" Margin="0,0,0,0" Foreground="{DynamicResource TextBrush}" FontSize="11" TextAlignment="Center"/>
-                <TextBlock Name="PlayerShipTitle" Text="Ship" Width="152" Height="20" Background="Transparent" FontFamily="{StaticResource Orbitron}" Margin="0,5,0,0" Foreground="{DynamicResource AccentBrush}" FontSize="14" />
-                <TextBlock Name="PlayerShipTextBox" Text="X" Width="152" Height="20" Background="Transparent" FontFamily="{StaticResource Orbitron}" Margin="0,0,0,0" Foreground="{DynamicResource TextBrush}" FontSize="11" TextAlignment="Center"/>
-                <TextBlock Name="GameModeTitle" Text="Game Mode" Width="152" Height="20" Background="Transparent" FontFamily="{StaticResource Orbitron}" Margin="0,5,0,0" Foreground="{DynamicResource AccentBrush}" FontSize="14"/>
-                <TextBlock Name="GameModeTextBox" Text="X" Width="152" Height="20" Background="Transparent" FontFamily="{StaticResource Orbitron}" Margin="0,0,0,0" Foreground="{DynamicResource TextBrush}" FontSize="11" TextAlignment="Center"/>
+                <TextBlock Name="PilotNameTitle" Text="Pilot" Width="152" Height="20" Background="Transparent" FontFamily="{StaticResource Orbitron}" Margin="0,5,0,0" Foreground="{DynamicResource AltTextBrush}" FontSize="14"/>
+                <TextBlock Name="PilotNameTextBox" Width="152" Height="20" Background="Transparent" FontFamily="{StaticResource Orbitron}" Margin="0,0,0,0" Foreground="{DynamicResource TextBrush}" FontSize="11" TextAlignment="Center"/>
+                <TextBlock Name="PlayerShipTitle" Text="Ship" Width="152" Height="20" Background="Transparent" FontFamily="{StaticResource Orbitron}" Margin="0,5,0,0" Foreground="{DynamicResource AltTextBrush}" FontSize="14" />
+                <TextBlock Name="PlayerShipTextBox" Width="152" Height="20" Background="Transparent" FontFamily="{StaticResource Orbitron}" Margin="0,0,0,0" Foreground="{DynamicResource TextBrush}" FontSize="11" TextAlignment="Center"/>
+                <TextBlock Name="GameModeTitle" Text="Game Mode" Width="152" Height="20" Background="Transparent" FontFamily="{StaticResource Orbitron}" Margin="0,5,0,0" Foreground="{DynamicResource AltTextBrush}" FontSize="14"/>
+                <TextBlock Name="GameModeTextBox" Width="152" Height="20" Background="Transparent" FontFamily="{StaticResource Orbitron}" Margin="0,0,0,0" Foreground="{DynamicResource TextBrush}" FontSize="11" TextAlignment="Center"/>
             </StackPanel>
             <StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Height="120" Width="172" >
                 <Button Name="StartButton" Content="Start" Width="100" Height="40" Style="{StaticResource ButtonStyle}" FontFamily="{StaticResource Orbitron}" Margin="0,20" Click="StartButton_Click"/>
-                <Button Name="StopButton" Content="Stop" Width="100" Height="40" Style="{StaticResource DisabledButtonStyle}" FontFamily="{StaticResource Orbitron}" IsEnabled="False"/>
+                <Button Name="StopButton" Content="Stop" Width="100" Height="40" Style="{StaticResource DisabledButtonStyle}" FontFamily="{StaticResource Orbitron}" IsEnabled="False" Click="StopButton_Click"/>
             </StackPanel>
         </Grid>
     </Grid>
