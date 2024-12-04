@@ -6,8 +6,7 @@
     <Application.Resources>
         <FontFamily x:Key="Orbitron">/AutoTrackR2;component/Fonts/Orbitron-Bold.ttf#Orbitron</FontFamily>
         <FontFamily x:Key="Roboto">/AutoTrackR2;component/Fonts/Roboto-Regular.ttf#Roboto</FontFamily>
-
-        <FontFamily x:Key="DynamicFont">"{}"</FontFamily>
+        <FontFamily x:Key="Gemunu">/AutoTrackR2;component/Fonts/GemunuLibre-VariableFont_wght.ttf#GemunuLibre</FontFamily>
 
         <!-- Default theme -->
         <Color x:Key="AccentColor">#00A9E0</Color>
@@ -121,6 +120,27 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+        </Style>
+        
+        <!-- Custom style for text blocks -->
+        <Style x:Key="RoundedTextBlock" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+            <Setter Property="FontFamily" Value="{StaticResource Roboto}" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Padding" Value="10,0,10,0" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+        </Style>
+
+        <!-- Wrap TextBlock in Border to apply rounded corners -->
+        <Style x:Key="RoundedTextBlockWithBorder" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource BackgroundLightBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="CornerRadius" Value="5"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="0,10,0,0"/>
         </Style>
 
         <!-- Custom Style for Rounded TextBox -->
@@ -278,15 +298,15 @@
 
         <!-- Modern Rounded ScrollBar Style -->
         <Style TargetType="ScrollBar">
-            <Setter Property="Width" Value="5" />
+            <Setter Property="Width" Value="6" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ScrollBar">
                         <Grid>
-                            <Track Name="PART_Track" IsDirectionReversed="true" Width="12" Margin="5,0,0,0">
+                            <Track Name="PART_Track" IsDirectionReversed="true" Width="6" Margin="0,0,0,0">
                                 <!-- Decrease Repeat Button -->
                                 <Track.DecreaseRepeatButton>
-                                    <RepeatButton Background="Transparent" BorderBrush="Transparent" BorderThickness="0">
+                                    <RepeatButton Background="Transparent" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="0">
                                         <RepeatButton.Template>
                                             <ControlTemplate TargetType="RepeatButton">
                                                 <Grid x:Name="RepeatButtonGrid">
@@ -318,9 +338,9 @@
                                             <ControlTemplate TargetType="Thumb">
                                                 <Grid>
                                                     <Border
-                                                Background="{DynamicResource BackgroundBrush}"
+                                                Background="{DynamicResource AccentBrush}"
                                                 BorderBrush="{DynamicResource AccentBrush}"
-                                                BorderThickness="2"
+                                                BorderThickness="0"
                                                 CornerRadius="3" />
                                                 </Grid>
                                             </ControlTemplate>
@@ -330,7 +350,7 @@
 
                                 <!-- Increase Repeat Button -->
                                 <Track.IncreaseRepeatButton>
-                                    <RepeatButton Background="Transparent" BorderBrush="Transparent" BorderThickness="0">
+                                    <RepeatButton Background="Transparent" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="0">
                                         <RepeatButton.Template>
                                             <ControlTemplate TargetType="RepeatButton">
                                                 <Grid x:Name="RepeatButtonGrid">

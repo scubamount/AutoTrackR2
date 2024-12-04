@@ -4,6 +4,8 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.IO;
+using System.Windows.Documents;
+using System.Globalization;
 
 namespace AutoTrackR2
 {
@@ -91,16 +93,19 @@ namespace AutoTrackR2
                                 {
                                     string pilotName = e.Data.Split('=')[1].Trim();
                                     PilotNameTextBox.Text = pilotName; // Update the Button's Content
+                                    AdjustFontSize(PilotNameTextBox);
                                 }
                                 else if (e.Data.Contains("PlayerShip="))
                                 {
                                     string playerShip = e.Data.Split('=')[1].Trim();
                                     PlayerShipTextBox.Text = playerShip;
+                                    AdjustFontSize(PlayerShipTextBox);
                                 }
                                 else if (e.Data.Contains("GameMode="))
                                 {
                                     string gameMode = e.Data.Split('=')[1].Trim();
                                     GameModeTextBox.Text = gameMode;
+                                    AdjustFontSize(GameModeTextBox);
                                 }
                                 else if (e.Data.Contains("NewKill="))
                                 {
@@ -108,21 +113,81 @@ namespace AutoTrackR2
                                     var killData = e.Data.Split('=')[1].Trim(); // Assume the kill data follows after "NewKill="
                                     var killParts = killData.Split(',');
 
+                                    // Fetch the dynamic resource for AltTextColor
+                                    var altTextColorBrush = new SolidColorBrush((Color)Application.Current.Resources["AltTextColor"]);
+
+                                    // Fetch the Orbitron FontFamily from resources
+                                    var orbitronFontFamily = (FontFamily)Application.Current.Resources["Orbitron"];
+                                    var gemunuFontFamily = (FontFamily)Application.Current.Resources["Gemunu"];
+
                                     // Create a new TextBlock for each kill
                                     var killTextBlock = new TextBlock
                                     {
-                                        Text = $"\nVictim Name: {killParts[1]}\nVictim Ship: {killParts[2]}\nVictim Org: {killParts[3]}\nJoin Date: {killParts[4]}\nUEE Record: {killParts[5]}\nKill Time: {killParts[6]}",
-                                        Style = (Style)Application.Current.Resources["RoundedTextBox"],  // Apply the style from resources
+                                        Margin = new Thickness(0, 10, 0, 10),
+                                        Style = (Style)Application.Current.Resources["RoundedTextBlock"], // Apply style for text
                                         FontSize = 14,
-                                        Margin = new Thickness(0, 10, 0, 10)
+                                        FontWeight = FontWeights.Bold,
+                                        FontFamily = gemunuFontFamily,
                                     };
 
-                                    // Add the new TextBlock to the StackPanel inside the Border
-                                    KillFeedStackPanel.Children.Add(killTextBlock);
+                                    // Add styled content using Run elements
+                                    killTextBlock.Inlines.Add(new Run("Victim Name: ")
+                                    {
+                                        Foreground = altTextColorBrush,
+                                        FontFamily = orbitronFontFamily,
+                                    });
+                                    killTextBlock.Inlines.Add(new Run($"{killParts[1]}\n"));
+
+                                    // Repeat for other lines
+                                    killTextBlock.Inlines.Add(new Run("Victim Ship: ")
+                                    {
+                                        Foreground = altTextColorBrush,
+                                        FontFamily = orbitronFontFamily,
+                                    });
+                                    killTextBlock.Inlines.Add(new Run($"{killParts[2]}\n"));
+
+                                    killTextBlock.Inlines.Add(new Run("Victim Org: ")
+                                    {
+                                        Foreground = altTextColorBrush,
+                                        FontFamily = orbitronFontFamily,
+                                    });
+                                    killTextBlock.Inlines.Add(new Run($"{killParts[3]}\n"));
+
+                                    killTextBlock.Inlines.Add(new Run("Join Date: ")
+                                    {
+                                        Foreground = altTextColorBrush,
+                                        FontFamily = orbitronFontFamily,
+                                    });
+                                    killTextBlock.Inlines.Add(new Run($"{killParts[4]}\n"));
+
+                                    killTextBlock.Inlines.Add(new Run("UEE Record: ")
+                                    {
+                                        Foreground = altTextColorBrush,
+                                        FontFamily = orbitronFontFamily,
+                                    });
+                                    killTextBlock.Inlines.Add(new Run($"{killParts[5]}\n"));
+
+                                    killTextBlock.Inlines.Add(new Run("Kill Time: ")
+                                    {
+                                        Foreground = altTextColorBrush,
+                                        FontFamily = orbitronFontFamily,
+                                    });
+                                    killTextBlock.Inlines.Add(new Run($"{killParts[6]}"));
+
+
+                                    // Create a Border and apply the RoundedTextBlockWithBorder style
+                                    var killBorder = new Border
+                                    {
+                                        Style = (Style)Application.Current.Resources["RoundedTextBlockWithBorder"], // Apply border style
+                                        Child = killTextBlock // Set the TextBlock inside the Border
+                                    };
+
+                                    // Add the new Border to the StackPanel inside the Border
+                                    KillFeedStackPanel.Children.Insert(0, killBorder);
                                 }
                                 else
                                 {
-                                    GameModeTextBox.Text = "ERROR";
+                                    DebugPanel.AppendText(e.Data + Environment.NewLine);
                                 }
                             });
                         }
@@ -134,6 +199,7 @@ namespace AutoTrackR2
                         {
                             Dispatcher.Invoke(() =>
                             {
+                                DebugPanel.AppendText(e.Data + Environment.NewLine);
                             });
                         }
                     };
@@ -168,6 +234,45 @@ namespace AutoTrackR2
             PilotNameTextBox.Text = string.Empty;
             PlayerShipTextBox.Text = string.Empty;
             GameModeTextBox.Text = string.Empty;
+        }
+
+        private void AdjustFontSize(TextBlock textBlock)
+        {
+            // Set a starting font size
+            double fontSize = 14;
+            double maxWidth = textBlock.Width;
+
+            if (string.IsNullOrEmpty(textBlock.Text) || double.IsNaN(maxWidth))
+                return;
+
+            // Measure the rendered width of the text
+            FormattedText formattedText = new FormattedText(
+                textBlock.Text,
+                CultureInfo.CurrentCulture,
+                FlowDirection.LeftToRight,
+                new Typeface(textBlock.FontFamily, textBlock.FontStyle, textBlock.FontWeight, textBlock.FontStretch),
+                fontSize,
+                textBlock.Foreground,
+                VisualTreeHelper.GetDpi(this).PixelsPerDip
+            );
+
+            // Reduce font size until text fits within the width
+            while (formattedText.Width > maxWidth && fontSize > 6)
+            {
+                fontSize -= 0.5;
+                formattedText = new FormattedText(
+                    textBlock.Text,
+                    CultureInfo.CurrentCulture,
+                    FlowDirection.LeftToRight,
+                    new Typeface(textBlock.FontFamily, textBlock.FontStyle, textBlock.FontWeight, textBlock.FontStretch),
+                    fontSize,
+                    textBlock.Foreground,
+                    VisualTreeHelper.GetDpi(this).PixelsPerDip
+                );
+            }
+
+            // Apply the adjusted font size
+            textBlock.FontSize = fontSize;
         }
     }
 }

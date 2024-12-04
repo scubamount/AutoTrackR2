@@ -52,11 +52,42 @@ If (Test-Path $logFilePath) {
 	Write-Output "PlayerName=Logfile not found."
 }
 
+$enemyPilot = "6lasphemous"
+$enemyShip = "MISC_Freelancer_MAX"
+$enemyOrgs = "GrieferNet"
+$joinDate = "12 Dec 2022"
+$citizenRecord = "237890"
+$KillTime = (Get-Date).ToUniversalTime().ToString("d MMM yyyy H:mm 'UTC'")
+
+Write-Output "NewKill=break,$enemyPilot,$enemyShip,$($enemyOrgs),$joinDate,$citizenRecord,$killTime"
+
+# Ship Manufacturers
+$prefixes = @(
+    "ORIG",
+    "CRUS",
+    "RSI",
+    "AEGS",
+    "VNCL",
+    "DRAK",
+    "ANVL",
+    "BANU",
+    "MISC",
+    "CNOU",
+    "XIAN",
+    "GAMA",
+    "TMBL",
+    "ESPR",
+    "KRIG",
+    "GRIN",
+    "XNAA"
+)
+
 # Define the regex pattern to extract information
 $killPattern = "<Actor Death> CActor::Kill: '(?<EnemyPilot>[^']+)' \[\d+\] in zone '(?<EnemyShip>[^']+)' killed by '(?<Player>[^']+)' \[[^']+\] using '(?<Weapon>[^']+)' \[Class (?<Class>[^\]]+)\] with damage type '(?<DamageType>[^']+)'"
 $puPattern = '<\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z> \[Notice\] <ContextEstablisherTaskFinished> establisher="CReplicationModel" message="CET completed" taskname="StopLoadingScreen" state=[^ ]+ status="Finished" runningTime=\d+\.\d+ numRuns=\d+ map="megamap" gamerules="SC_Default" sessionId="[a-f0-9\-]+" \[Team_Network\]\[Network\]\[Replication\]\[Loading\]\[Persistence\]'
 $acPattern = "ArenaCommanderFeature"
 $loadoutPattern = '\[InstancedInterior\] OnEntityLeaveZone - InstancedInterior \[(?<InstancedInterior>[^\]]+)\] \[\d+\] -> Entity \[(?<Entity>[^\]]+)\] \[\d+\] -- m_openDoors\[\d+\], m_managerGEID\[(?<ManagerGEID>\d+)\], m_ownerGEID\[(?<OwnerGEID>[^\[]+)\]'
+$shipManPattern = "^(" + ($prefixes -join "|") + ")"
 # $loginPattern = "\[Notice\] <AccountLoginCharacterStatus_Character> Character: createdAt [A-Za-z0-9]+ - updatedAt [A-Za-z0-9]+ - geid [A-Za-z0-9]+ - accountId [A-Za-z0-9]+ - name (?<Player>[A-Za-z0-9_-]+) - state STATE_CURRENT" # KEEP THIS INCASE LEGACY LOGIN IS REMOVED 
 $loginPattern = "\[Notice\] <Legacy login response> \[CIG-net\] User Login Success - Handle\[(?<Player>[A-Za-z0-9_-]+)\]"
 $cleanupPattern = '^(.+?)_\d+$'
@@ -66,6 +97,7 @@ $versionPattern = "--system-trace-env-id='pub-sc-alpha-(?<gameversion>\d{4}-\d{7
 $joinDatePattern = '<span class="label">Enlisted</span>\s*<strong class="value">([^<]+)</strong>'
 $orgPattern = '<IMG[^>]*>\s*([^<]+)'
 $ueePattern = '<p class="entry citizen-record">\s*<span class="label">UEE Citizen Record<\/span>\s*<strong class="value">#?(n\/a|\d+)<\/strong>\s*<\/p>'
+
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
@@ -93,12 +125,14 @@ Do {
 			$entity = $matches['Entity']
 			$ownerGEID = $matches['OwnerGEID']
 
-			If ($ownerGEID -eq $global:userName -and $entity -notlike "*SoundListener*" -and $entity -notlike "*StreamingSOC*" -and $entity -ne $global:userName -and $entity -notlike "*debris*") {
+			If ($ownerGEID -eq $global:userName -and $entity -match $shipManPattern) {
 				$global:loadOut = $entity
 				If ($global:loadOut -match $cleanupPattern){
 					$global:loadOut = $matches[1]
 				}	
-			} 
+			} else {
+				$global:loadout = "Player"
+			}
 		}
     }
 	Write-Output "PlayerShip=$global:loadOut"
@@ -106,7 +140,7 @@ Do {
 	# Get gameVersion
 	Foreach ($line in $authlog){
 		If ($line -match $versionPattern){
-			$GameVersion = $matches[gameversion]
+			$GameVersion = $matches['gameversion']
 		}
 		if ($line -match $acPattern){
 			$GameMode = "AC"
@@ -115,6 +149,7 @@ Do {
 			$GameMode = "PU"
 		}
 	}
+	Write-Output "GameMode=$GameMode"
 
     # If no match found, print "Logged In: False"
     if (-not $global:userName) {
@@ -164,10 +199,10 @@ function Read-LogEntry {
 		If ($ship -match $cleanupPattern){
 			$ship = $matches[1]
 		}
-		if ($ship -like "OOC_*"){
+		if ($ship -notmatch $shipManPattern){
 			$ship = "Player"
 		}
-		If ($enemyShip -like "OOC_*" -or $enemyShip -like "hangar*") {
+		If ($enemyShip -notmatch $shipManPattern) {
 			$enemyShip = "Player"
 		}
 			
@@ -187,6 +222,7 @@ function Read-LogEntry {
 			# Get Enlisted Date
 			if ($($page1.content) -match $joinDatePattern) {
 				$joinDate = $matches[1]
+				$joinDate =  = $date -replace ',', ''
 			} else {
 				$joinDate = "UNKNOWN"
 			}
@@ -199,10 +235,7 @@ function Read-LogEntry {
 				$enemyOrgs = "N/A"
 			} else {
 				# Loop through each match and display the organization name
-				foreach ($match in $orgMatches) {
-					$organizationName = $match.Groups[1].Value.Trim()
-					$enemyOrgs = $enemyOrgs + $organizationName
-				}
+					$enemyOrgs = $match.Groups[1].Value.Trim()
 			}
 
 			# Get UEE Number
@@ -352,7 +385,7 @@ function Read-LogEntry {
 		$entity = $matches['Entity']
 		$ownerGEID = $matches['OwnerGEID']
 
-        If ($ownerGEID -eq $global:userName -and $entity -notlike "*SoundListener*" -and $entity -notlike "*StreamingSOC*" -and $entity -ne $global:userName -and $entity -notlike "*debris*") {
+        If ($ownerGEID -eq $global:userName -and $entity -match $shipManPattern) {
 			$global:loadOut = $entity
 			If ($global:loadOut -match $cleanupPattern){
 				$global:loadOut = $matches[1]
@@ -363,6 +396,7 @@ function Read-LogEntry {
 }
 
 # Monitor the log file and process new lines as they are added
-Get-Content -Path $logFile -Wait -Tail 0 | ForEach-Object {
+Get-Content -Path $logFilePath -Wait -Tail 0 | ForEach-Object {
     Read-LogEntry $_
 }
+#>
