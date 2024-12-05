@@ -6,6 +6,7 @@ using System.Windows.Media.Effects;
 using System.IO;
 using System.Windows.Documents;
 using System.Globalization;
+using System.Windows.Media.Imaging;
 
 namespace AutoTrackR2
 {
@@ -73,7 +74,7 @@ namespace AutoTrackR2
                     ProcessStartInfo psi = new ProcessStartInfo
                     {
                         FileName = "powershell.exe",
-                        Arguments = $"-NoProfile -ExecutionPolicy Bypass -File \"C:\\Program Files\\GrieferNET\\AutoTrackR2_Setup\\KillTrackR_MainScript.ps1\"",
+                        Arguments = $"-NoProfile -ExecutionPolicy Bypass -File {scriptPath}",
                         WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory,
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
@@ -116,6 +117,7 @@ namespace AutoTrackR2
 
                                     // Fetch the dynamic resource for AltTextColor
                                     var altTextColorBrush = new SolidColorBrush((Color)Application.Current.Resources["AltTextColor"]);
+                                    var accentColorBrush = new SolidColorBrush((Color)Application.Current.Resources["AccentColor"]);
 
                                     // Fetch the Orbitron FontFamily from resources
                                     var orbitronFontFamily = (FontFamily)Application.Current.Resources["Orbitron"];
@@ -179,12 +181,54 @@ namespace AutoTrackR2
                                     var killBorder = new Border
                                     {
                                         Style = (Style)Application.Current.Resources["RoundedTextBlockWithBorder"], // Apply border style
-                                        Child = killTextBlock // Set the TextBlock inside the Border
                                     };
+
+                                    // Create a Grid to hold the TextBlock and the Image
+                                    var killGrid = new Grid
+                                    {
+                                        Width = 400, // Adjust the width of the Grid
+                                        Height = 130, // Adjust the height as needed
+                                    };
+
+                                    // Define two columns in the Grid: one for the text and one for the image
+                                    killGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(3, GridUnitType.Star) }); // Text column
+                                    killGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) }); // Image column
+
+                                    // Add the TextBlock to the first column of the Grid
+                                    Grid.SetColumn(killTextBlock, 0);
+                                    killGrid.Children.Add(killTextBlock);
+
+                                    // Create the Image for the profile
+                                    var profileImage = new Image
+                                    {
+                                        Source = new BitmapImage(new Uri(killParts[7])), // Assuming the 8th part contains the profile image URL
+                                        Width = 90,
+                                        Height = 90,
+                                        Stretch = Stretch.Fill, // Adjust how the image fits
+                                    };
+
+                                    // Create a Border around the Image
+                                    var imageBorder = new Border
+                                    {
+                                        BorderBrush = accentColorBrush, // Set the border color
+                                        BorderThickness = new Thickness(2), // Set the border thickness
+                                        Padding = new Thickness(0), // Optional padding inside the border
+                                        CornerRadius = new CornerRadius(5),
+                                        Margin = new Thickness(10,18,15,18),
+                                        Child = profileImage // Set the Image as the content of the Border
+                                    };
+
+                                    // Add the Border (with the image inside) to the Grid
+                                    Grid.SetColumn(imageBorder, 1);
+                                    killGrid.Children.Add(imageBorder);
+
+                                    // Set the Grid as the child of the Border
+                                    killBorder.Child = killGrid;
 
                                     // Add the new Border to the StackPanel inside the Border
                                     KillFeedStackPanel.Children.Insert(0, killBorder);
                                 }
+
                                 else
                                 {
                                     DebugPanel.AppendText(e.Data + Environment.NewLine);

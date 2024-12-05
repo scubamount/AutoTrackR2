@@ -87,11 +87,50 @@ $versionPattern = "--system-trace-env-id='pub-sc-alpha-(?<gameversion>\d{4}-\d{7
 
 # Lookup Patterns
 $joinDatePattern = '<span class="label">Enlisted</span>\s*<strong class="value">([^<]+)</strong>'
-$orgPattern = '<IMG[^>]*>\s*([^<]+)'
 $ueePattern = '<p class="entry citizen-record">\s*<span class="label">UEE Citizen Record<\/span>\s*<strong class="value">#?(n\/a|\d+)<\/strong>\s*<\/p>'
 $global:loadout = "Player"
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
+<#
+$enemyPilot = "feezydafox"
+$enemyShip = "AEGS_Gladius"
+$KillTime = (Get-Date).ToUniversalTime().ToString("d MMM yyyy H:mm 'UTC'")
+$page1 = Invoke-WebRequest -uri "https://robertsspaceindustries.com/citizens/$enemyPilot"
+
+# Get Enlisted Date
+if ($($page1.content) -match $joinDatePattern) {
+	$joinDate = $matches[1]
+	$joinDate = $joinDate -replace ',', ''
+} else {
+	$joinDate = "-"
+}
+
+# Check if there are any matches
+$enemyOrgs = $page1.links[4].innerHTML
+
+if ($null -eq $enemyOrgs) {
+    $enemyOrgs = "-"
+}
+
+# Get UEE Number
+if ($($page1.content) -match $ueePattern) {
+	# The matched UEE Citizen Record number is in $matches[1]
+	$citizenRecord = $matches[1]
+} else {
+	$citizenRecord = "-"
+}
+If ($citizenRecord -eq "n/a") {
+	$citizenRecordAPI = "-1"
+	$citizenRecord = "-"
+} Else {
+	$citizenRecordAPI = $citizenRecord
+}
+# Get PFP
+$victimPFP = "https://robertsspaceindustries.com$($page1.images[0].src)"
+
+Write-Output "NewKill=break,$enemyPilot,$enemyShip,$enemyOrgs,$joinDate,$citizenRecord,$killTime,$victimPFP"
+#>
 
 # Match and extract username from gamelog
 Do {
@@ -203,25 +242,20 @@ function Read-LogEntry {
 
 			$KillTime = (Get-Date).ToUniversalTime().ToString("d MMM yyyy H:mm 'UTC'")
 			$page1 = Invoke-WebRequest -uri "https://robertsspaceindustries.com/citizens/$enemyPilot"
-			$page2 = Invoke-WebRequest -uri "https://robertsspaceindustries.com/citizens/$enemyPilot/organizations"
 			
 			# Get Enlisted Date
 			if ($($page1.content) -match $joinDatePattern) {
 				$joinDate = $matches[1]
-				$joinDate =  = $date -replace ',', ''
+				$joinDate = $joinDate -replace ',', ''
 			} else {
-				$joinDate = "UNKNOWN"
+				$joinDate = "-"
 			}
 
-			# Find Org matches using the regex pattern
-			$orgMatches = [regex]::matches($($page2.links.innerhtml), $orgPattern)
 			# Check if there are any matches
-			$enemyOrgs = @()
-			if ($orgMatches.Count -eq 0) {
-				$enemyOrgs = "N/A"
-			} else {
-				# Loop through each match and display the organization name
-					$enemyOrgs = $match.Groups[1].Value.Trim()
+			$enemyOrgs = $page1.links[4].innerHTML
+
+			if ($null -eq $enemyOrgs) {
+				$enemyOrgs = "-"
 			}
 
 			# Get UEE Number
@@ -229,13 +263,17 @@ function Read-LogEntry {
 				# The matched UEE Citizen Record number is in $matches[1]
 				$citizenRecord = $matches[1]
 			} else {
-				$citizenRecord = "-1"
+				$citizenRecord = "-"
 			}
-			If ($citizenRecord -eq "N/A") {
+			If ($citizenRecord -eq "n/a") {
 				$citizenRecordAPI = "-1"
+				$citizenRecord = "-"
 			} Else {
 				$citizenRecordAPI = $citizenRecord
 			}
+
+			# Get PFP
+			$victimPFP = "https://robertsspaceindustries.com$($page1.images[0].src)"
 
 			# Send to API
 			# Define the data to send
@@ -248,9 +286,9 @@ function Read-LogEntry {
 					weapon = $weapon
 					method = $damageType
 					loadout_ship = $ship
-					gameVersion = $GameVersion
-					gameMode = $GameMode
-					trackrVersion = $TrackRver
+					#gameVersion = $GameVersion
+					#gameMode = $GameMode
+					#trackrVersion = $TrackRver
 				}
 
 				# Headers which may or may not be necessary
@@ -296,7 +334,7 @@ function Read-LogEntry {
 				Logged			 = $logMode
 			}
 
-			Write-Output "NewKill=break,$enemyPilot,$enemyShip,$($enemyOrgs[0]),$joinDate,$citizenRecord,$killTime"
+			Write-Output "NewKill=break,$enemyPilot,$enemyShip,$enemyOrgs,$joinDate,$citizenRecord,$killTime,$victimPFP"
 
 			# Export the object to a CSV
 			# If the CSV file does not exist, it will create a new file with headers.
