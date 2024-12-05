@@ -350,11 +350,20 @@ namespace AutoTrackR2
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            // Get the directory of the running executable
-            string exeDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            // Get the directory for the user's local application data
+            string appDataDirectory = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "AutoTrackR2"
+            );
 
-            // Combine the executable directory with the config file name
-            string configFilePath = Path.Combine(exeDirectory, "config.ini");
+            // Ensure the directory exists
+            if (!Directory.Exists(appDataDirectory))
+            {
+                Directory.CreateDirectory(appDataDirectory);
+            }
+
+            // Combine the app data directory with the config file name
+            string configFilePath = Path.Combine(appDataDirectory, "config.ini");
 
             using (StreamWriter writer = new StreamWriter(configFilePath))
             {

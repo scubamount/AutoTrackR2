@@ -188,8 +188,12 @@ namespace AutoTrackR2
 
         public static void LoadConfig()
         {
-            string exeDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            string configFilePath = Path.Combine(exeDirectory, "config.ini");
+            // Define the config file path in a writable location
+            string configDirectory = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "AutoTrackR2"
+            );
+            string configFilePath = Path.Combine(configDirectory, "config.ini");
 
             if (File.Exists(configFilePath))
             {
@@ -217,19 +221,31 @@ namespace AutoTrackR2
 
         public static void SaveConfig()
         {
-            string exeDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            string configFilePath = Path.Combine(exeDirectory, "config.ini");
+            // Define the config file path in a writable location
+            string configDirectory = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "YourAppName"
+            );
 
+            // Ensure the directory exists
+            if (!Directory.Exists(configDirectory))
+            {
+                Directory.CreateDirectory(configDirectory);
+            }
+
+            string configFilePath = Path.Combine(configDirectory, "config.ini");
+
+            // Write the configuration to the file
             using (StreamWriter writer = new StreamWriter(configFilePath))
             {
-                writer.WriteLine($"LogFile=\"{LogFile}\"");
-                writer.WriteLine($"ApiUrl=\"{ApiUrl}\"");
-                writer.WriteLine($"ApiKey=\"{ApiKey}\"");
-                writer.WriteLine($"VideoPath=\"{VideoPath}\"");
-                writer.WriteLine($"VisorWipe=\"{VisorWipe}\"");
-                writer.WriteLine($"VideoRecord=\"{VideoRecord}\"");
-                writer.WriteLine($"OfflineMode=\"{OfflineMode}\"");
-                writer.WriteLine($"Theme=\"{Theme}\"");
+                writer.WriteLine($"LogFile={LogFile}");
+                writer.WriteLine($"ApiUrl={ApiUrl}");
+                writer.WriteLine($"ApiKey={ApiKey}");
+                writer.WriteLine($"VideoPath={VideoPath}");
+                writer.WriteLine($"VisorWipe={VisorWipe}");
+                writer.WriteLine($"VideoRecord={VideoRecord}");
+                writer.WriteLine($"OfflineMode={OfflineMode}");
+                writer.WriteLine($"Theme={Theme}");
             }
         }
     }

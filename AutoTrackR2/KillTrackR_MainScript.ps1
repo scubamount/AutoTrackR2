@@ -1,7 +1,8 @@
 ﻿$TrackRver = "2.0"
 
 # Path to the config file
-$scriptFolder = Split-Path -Parent $MyInvocation.MyCommand.Path
+$appName = "AutoTrackR2"
+$scriptFolder = Join-Path -Path (Join-Path -Path $env:LOCALAPPDATA -ChildPath $appName)
 $configFile = Join-Path -Path $scriptFolder -ChildPath "config.ini"
 
 # Read the config file into a hashtable
