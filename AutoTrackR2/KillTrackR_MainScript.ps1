@@ -292,9 +292,9 @@ function Read-LogEntry {
 					weapon = $weapon
 					method = $damageType
 					loadout_ship = $ship
-					gameVersion = $GameVersion
-					gameMode = $GameMode
-					trackrVersion = $TrackRver
+					game_version = $GameVersion
+					gamemode = $GameMode
+					trackr_version = $TrackRver
 				}
 
 				# Headers which may or may not be necessary
