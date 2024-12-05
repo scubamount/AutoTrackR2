@@ -73,7 +73,8 @@ namespace AutoTrackR2
                     ProcessStartInfo psi = new ProcessStartInfo
                     {
                         FileName = "powershell.exe",
-                        Arguments = $"-NoProfile -ExecutionPolicy Bypass -File \"{scriptPath}\"",
+                        Arguments = $"-NoProfile -ExecutionPolicy Bypass -File \"C:\\Program Files\\GrieferNET\\AutoTrackR2_Setup\\KillTrackR_MainScript.ps1\"",
+                        WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory,
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
                         UseShellExecute = false,

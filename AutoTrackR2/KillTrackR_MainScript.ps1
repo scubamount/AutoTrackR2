@@ -2,7 +2,7 @@
 
 # Path to the config file
 $appName = "AutoTrackR2"
-$scriptFolder = Join-Path -Path (Join-Path -Path $env:LOCALAPPDATA -ChildPath $appName)
+$scriptFolder = Join-Path -Path $env:LOCALAPPDATA -ChildPath $appName
 $configFile = Join-Path -Path $scriptFolder -ChildPath "config.ini"
 
 # Read the config file into a hashtable
@@ -89,7 +89,7 @@ $versionPattern = "--system-trace-env-id='pub-sc-alpha-(?<gameversion>\d{4}-\d{7
 $joinDatePattern = '<span class="label">Enlisted</span>\s*<strong class="value">([^<]+)</strong>'
 $orgPattern = '<IMG[^>]*>\s*([^<]+)'
 $ueePattern = '<p class="entry citizen-record">\s*<span class="label">UEE Citizen Record<\/span>\s*<strong class="value">#?(n\/a|\d+)<\/strong>\s*<\/p>'
-
+$global:loadout = "Player"
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
@@ -107,13 +107,9 @@ Do {
         if ($line -match $loginPattern) {
             $global:userName = $matches['Player']
             Write-Output "PlayerName=$global:userName"
-            break
         }
-	}
-
-	# Get Loadout
-	foreach ($line in $authLog) {
-		if ($line -match $loadoutPattern){
+		# Get Loadout
+		if ($line -match $loadoutPattern) {
 			$entity = $matches['Entity']
 			$ownerGEID = $matches['OwnerGEID']
 
@@ -121,16 +117,13 @@ Do {
 				$global:loadOut = $entity
 				If ($global:loadOut -match $cleanupPattern){
 					$global:loadOut = $matches[1]
-				}	
-			} else {
-				$global:loadout = "Player"
+				}
+				Write-Output "PlayerShip=$global:loadOut"
 			}
 		}
-    }
-	Write-Output "PlayerShip=$global:loadOut"
 
-	# Get gameVersion
-	Foreach ($line in $authlog){
+		Write-Output "PlayerShip=$global:loadOut"
+
 		If ($line -match $versionPattern){
 			$GameVersion = $matches['gameversion']
 		}
@@ -140,11 +133,12 @@ Do {
 		if ($line -match $puPattern){
 			$GameMode = "PU"
 		}
-	}
-	Write-Output "GameMode=$GameMode"
+		Write-Output "GameMode=$GameMode"
 
+	}
     # If no match found, print "Logged In: False"
     if (-not $global:userName) {
+		Write-Output "PlayerName=No Player Found..."
         Start-Sleep -Seconds 30
     }
 
