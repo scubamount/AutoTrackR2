@@ -94,7 +94,6 @@ $versionPattern = "--system-trace-env-id='pub-sc-alpha-(?<gameversion>\d{4}-\d{7
 # Lookup Patterns
 $joinDatePattern = '<span class="label">Enlisted</span>\s*<strong class="value">([^<]+)</strong>'
 $ueePattern = '<p class="entry citizen-record">\s*<span class="label">UEE Citizen Record<\/span>\s*<strong class="value">#?(n\/a|\d+)<\/strong>\s*<\/p>'
-$global:loadout = "Player"
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
@@ -145,7 +144,7 @@ Do {
 
     # Initialize variable to store username
     $global:userName = $null
-	$global:loadOut = $null
+	$global:loadout = "Player"
 
     # Loop through each line in the log to find the matching line
     foreach ($line in $authLog) {
@@ -159,14 +158,14 @@ Do {
 			$ownerGEID = $matches['OwnerGEID']
 
 			If ($ownerGEID -eq $global:userName -and $entity -match $shipManPattern) {
-				$global:loadOut = $entity
-				If ($global:loadOut -match $cleanupPattern){
-					$global:loadOut = $matches[1]
+				$tryloadOut = $entity
+				If ($tryloadOut -match $cleanupPattern){
+					if ($null -ne $matches[1]){
+						$global:loadOut = $matches[1]
+					}
 				}
-				Write-Output "PlayerShip=$global:loadOut"
 			}
 		}
-
 		Write-Output "PlayerShip=$global:loadOut"
 
 		If ($line -match $versionPattern){
@@ -252,13 +251,13 @@ function Read-LogEntry {
 			# Get Enlisted Date
 			if ($($page1.content) -match $joinDatePattern) {
 				$joinDate = $matches[1]
-				$joinDate = $joinDate -replace ',', ''
+				$joinDate2 = $joinDate -replace ',', ''
 			} else {
-				$joinDate = "-"
+				$joinDate2 = "-"
 			}
 
 			# Check if there are any matches
-			$enemyOrgs = $page1.links[4].innerHTML
+			$enemyOrgs = $page1.links[3].innerHTML
 
 			if ($null -eq $enemyOrgs) {
 				$enemyOrgs = "-"
@@ -281,25 +280,28 @@ function Read-LogEntry {
 			# Get PFP
 			$victimPFP = "https://robertsspaceindustries.com$($page1.images[0].src)"
 
+			Write-Output "NewKill=throwaway,$enemyPilot,$enemyShip,$enemyOrgs,$joinDate2,$citizenRecord,$killTime,$victimPFP"
+
+			$GameMode = $GameMode.ToLower()
 			# Send to API
 			# Define the data to send
 			If ($null -ne $apiUrl -and $offlineMode -eq $false){
 				$data = @{
-					victim_ship = $enemyShip
-					victim = $enemyPilot
-					enlisted = $joinDate
-					rsi = $citizenRecordAPI
-					weapon = $weapon
-					method = $damageType
-					loadout_ship = $ship
-					game_version = $GameVersion
-					gamemode = $GameMode
-					trackr_version = $TrackRver
+					victim_ship		= $enemyShip
+					victim			= $enemyPilot
+					enlisted		= $joinDate
+					rsi				= $citizenRecordAPI
+					weapon			= $weapon
+					method			= $damageType
+					loadout_ship	= $ship
+					game_version	= $GameVersion
+					gamemode		= $GameMode
+					trackr_version	= $TrackRver
 				}
 
 				# Headers which may or may not be necessary
 				$headers = @{
-					"Authorization" = "Bearer $apiToken"
+					"Authorization" = "Bearer $apiKey"
 					"Content-Type" = "application/json"
 					"User-Agent" = "AutoTrackR2"
 				}
@@ -312,7 +314,6 @@ function Read-LogEntry {
 					# Catch and display errors
 					$apiError = $_
 					# Add to output file
-					Add-Content -Path "$scriptFolder\kill-log.csv" -value $($_)
 					$logMode = "Err-Local"
 				}
 			} Else {
@@ -327,9 +328,9 @@ function Read-LogEntry {
 				KillTime         = $killTime
 				EnemyPilot       = $enemyPilot
 				EnemyShip        = $enemyShip
-				Enlisted         = $joinDate
+				Enlisted         = $joinDate2
 				RecordNumber     = $citizenRecord
-				OrgAffiliation   = $enemyOrgs[0]
+				OrgAffiliation   = $enemyOrgs
 				Player           = $player
 				Weapon           = $weapon
 				Ship             = $ship
@@ -340,14 +341,12 @@ function Read-LogEntry {
 				Logged			 = $logMode
 			}
 
-			Write-Output "NewKill=break,$enemyPilot,$enemyShip,$enemyOrgs,$joinDate,$citizenRecord,$killTime,$victimPFP"
-
-			# Check if the CSV file exists
+			# Export to CSV
 			if (-Not (Test-Path $csvPath)) {
-				# If the file does not exist, create it with headers by writing the first object
+				# If file doesn't exist, create it with headers
 				$killData | Export-Csv -Path $csvPath -NoTypeInformation
 			} else {
-				# If the file exists, append the new data
+				# Append data to the existing file
 				$killData | Export-Csv -Path $csvPath -Append -NoTypeInformation
 			}
 
@@ -421,8 +420,8 @@ function Read-LogEntry {
 		$ownerGEID = $matches['OwnerGEID']
 
         If ($ownerGEID -eq $global:userName -and $entity -match $shipManPattern) {
-			$global:loadOut = $entity
-			If ($global:loadOut -match $cleanupPattern){
+			$tryloadOut = $entity
+			If ($tryloadOut -match $cleanupPattern){
 				$global:loadOut = $matches[1]
 			}
 			Write-Output "PlayerShip=$global:loadOut"

@@ -264,7 +264,7 @@ namespace AutoTrackR2
             });
         }
 
-        private void StopButton_Click(object sender, RoutedEventArgs e)
+        public void StopButton_Click(object sender, RoutedEventArgs e)
         {
             if (runningProcess != null && !runningProcess.HasExited)
             {

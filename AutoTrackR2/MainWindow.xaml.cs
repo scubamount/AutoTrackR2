@@ -51,7 +51,14 @@ namespace AutoTrackR2
             UpdateTabVisuals();
         }
 
-        private void CloseWindow(object sender, RoutedEventArgs e) => this.Close();
+        private void CloseWindow(object sender, RoutedEventArgs e)
+        {
+            // If runningProcess is not null and still active, terminate it
+            homePage.StopButton_Click(sender, e);
+
+            // Close the main window
+            this.Close();
+        }
 
         private void MinimizeWindow(object sender, RoutedEventArgs e) => this.WindowState = WindowState.Minimized;
 
