@@ -175,7 +175,6 @@ namespace AutoTrackR2
                                     });
                                     killTextBlock.Inlines.Add(new Run($"{killParts[6]}"));
 
-
                                     // Create a Border and apply the RoundedTextBlockWithBorder style
                                     var killBorder = new Border
                                     {

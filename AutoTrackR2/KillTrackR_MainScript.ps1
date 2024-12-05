@@ -293,6 +293,7 @@ function Read-LogEntry {
 				Mode             = $GameMode
 				GameVersion      = $GameVersion
 				TrackRver		 = $TrackRver
+				Logged			 = $logMode
 			}
 
 			Write-Output "NewKill=break,$enemyPilot,$enemyShip,$($enemyOrgs[0]),$joinDate,$citizenRecord,$killTime"
