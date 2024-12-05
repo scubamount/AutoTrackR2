@@ -34,23 +34,29 @@ if ($offlineMode -eq 1){
 } else {
 	$offlineMode = $false
 }
+Write-Output "PlayerName=OfflineMode: $offlineMode"
 
 if ($videoRecord -eq 1){
 	$videoRecord = $true
 } else {
 	$videoRecord = $false
 }
+Write-Output "PlayerName=VideoRecord: $videoRecord"
 
 if ($visorWipe -eq 1){
 	$visorWipe = $true
 } else {
 	$visorWipe = $false
 }
+Write-Output "PlayerName=VisorWipe: $visorWipe"
 
 If (Test-Path $logFilePath) {
 	Write-Output "PlayerName=Logfile found"
 } else {
 	Write-Output "Logfile not found."
+}
+If ($null -ne $apiUrl){
+Write-output "PlayerName=$apiURL"
 }
 
 # Ship Manufacturers
@@ -277,7 +283,7 @@ function Read-LogEntry {
 
 			# Send to API
 			# Define the data to send
-			If ($apiUrl -eq $true -and $offlineMode -eq $false){
+			If ($null -ne $apiUrl -and $offlineMode -eq $false){
 				$data = @{
 					victim_ship = $enemyShip
 					victim = $enemyPilot
@@ -286,9 +292,9 @@ function Read-LogEntry {
 					weapon = $weapon
 					method = $damageType
 					loadout_ship = $ship
-					#gameVersion = $GameVersion
-					#gameMode = $GameMode
-					#trackrVersion = $TrackRver
+					gameVersion = $GameVersion
+					gameMode = $GameMode
+					trackrVersion = $TrackRver
 				}
 
 				# Headers which may or may not be necessary
