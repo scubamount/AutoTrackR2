@@ -295,7 +295,7 @@ function Read-LogEntry {
 				$headers = @{
 					"Authorization" = "Bearer $apiToken"
 					"Content-Type" = "application/json"
-					"User-Agent" = "TEST-PS"
+					"User-Agent" = "AutoTrackR2"
 				}
 
 				try {

@@ -74,7 +74,7 @@ namespace AutoTrackR2
                     ProcessStartInfo psi = new ProcessStartInfo
                     {
                         FileName = "powershell.exe",
-                        Arguments = $"-NoProfile -ExecutionPolicy Bypass -File {scriptPath}",
+                        Arguments = $"-NoProfile -ExecutionPolicy Bypass -File \"{scriptPath}\"",
                         WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory,
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
