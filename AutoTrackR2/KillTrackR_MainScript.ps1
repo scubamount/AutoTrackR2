@@ -323,7 +323,7 @@ function Read-LogEntry {
 			$csvPath = "$scriptFolder\Kill-log.csv"
 
 			# Create an object to hold the data
-			$killData = New-Object PSObject -property @{
+			$killData = [PSCustomObject]@{
 				KillTime         = $killTime
 				EnemyPilot       = $enemyPilot
 				EnemyShip        = $enemyShip
@@ -342,10 +342,14 @@ function Read-LogEntry {
 
 			Write-Output "NewKill=break,$enemyPilot,$enemyShip,$enemyOrgs,$joinDate,$citizenRecord,$killTime,$victimPFP"
 
-			# Export the object to a CSV
-			# If the CSV file does not exist, it will create a new file with headers.
-			# If the file already exists, it will append the data.
-			$killData | Export-Csv -Path $csvPath -Append -NoTypeInformation
+			# Check if the CSV file exists
+			if (-Not (Test-Path $csvPath)) {
+				# If the file does not exist, create it with headers by writing the first object
+				$killData | Export-Csv -Path $csvPath -NoTypeInformation
+			} else {
+				# If the file exists, append the new data
+				$killData | Export-Csv -Path $csvPath -Append -NoTypeInformation
+			}
 
 			$sleeptimer = 10
 

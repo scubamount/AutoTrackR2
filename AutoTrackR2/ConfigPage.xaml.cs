@@ -8,8 +8,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
-using System.Windows.Media.Imaging;
-using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 using Microsoft.Win32;
 
@@ -302,32 +300,82 @@ namespace AutoTrackR2
         private void VisorWipeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             Slider slider = (Slider)sender;
-            ConfigManager.VisorWipe = (int)slider.Value; // 0 or 1
 
-            // Check if the value is 0 or 1 and apply the corresponding style
-            if (ConfigManager.VisorWipe == 0)
+            // Build the dynamic file path for the current user
+            string filePath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "AutoTrackR2",
+                "visorwipe.ahk"
+            );
+
+            // Get the current value of the slider (0 or 1)
+            ConfigManager.VisorWipe = (int)slider.Value;
+
+            if (ConfigManager.VisorWipe == 1)
             {
-                slider.Style = (Style)Application.Current.FindResource("FalseToggleStyle");  // Apply FalseToggleStyle
+                // Check if the file exists
+                if (File.Exists(filePath))
+                {
+                    // Apply the enabled style if the file exists
+                    slider.Style = (Style)Application.Current.FindResource("ToggleSliderStyle");
+                }
+                else
+                {
+                    // File does not exist; revert the toggle to 0
+                    ConfigManager.VisorWipe = 0;
+                    slider.Value = 0; // Revert the slider value
+                    slider.Style = (Style)Application.Current.FindResource("FalseToggleStyle");
+
+                    // Optionally, display a message to the user
+                    MessageBox.Show($"Visor wipe script not found. Please ensure the file exists at:\n{filePath}",
+                                    "File Missing", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
             }
             else
             {
-                slider.Style = (Style)Application.Current.FindResource("ToggleSliderStyle"); // Apply ToggleSliderStyle
+                // Apply the disabled style
+                slider.Style = (Style)Application.Current.FindResource("FalseToggleStyle");
             }
         }
 
         private void VideoRecordSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             Slider slider = (Slider)sender;
-            ConfigManager.VideoRecord = (int)slider.Value; // 0 or 1
 
-            // Check if the value is 0 or 1 and apply the corresponding style
-            if (ConfigManager.VideoRecord == 0)
+            // Build the dynamic file path for the current user
+            string filePath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "AutoTrackR2",
+                "videorecord.ahk"
+            );
+
+            // Get the current value of the slider (0 or 1)
+            ConfigManager.VideoRecord = (int)slider.Value;
+
+            if (ConfigManager.VideoRecord == 1)
             {
-                slider.Style = (Style)Application.Current.FindResource("FalseToggleStyle");  // Apply FalseToggleStyle
+                // Check if the file exists
+                if (File.Exists(filePath))
+                {
+                    // Apply the enabled style if the file exists
+                    slider.Style = (Style)Application.Current.FindResource("ToggleSliderStyle");
+                }
+                else
+                {
+                    // File does not exist; revert the toggle to 0
+                    ConfigManager.VideoRecord = 0;
+                    slider.Value = 0; // Revert the slider value
+                    slider.Style = (Style)Application.Current.FindResource("FalseToggleStyle");
+
+                    // Optionally, display a message to the user
+                    MessageBox.Show($"Video record script not found. Please ensure the file exists at:\n{filePath}",
+                                    "File Missing", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
             }
             else
             {
-                slider.Style = (Style)Application.Current.FindResource("ToggleSliderStyle"); // Apply ToggleSliderStyle
+                // Apply the disabled style
+                slider.Style = (Style)Application.Current.FindResource("FalseToggleStyle");
             }
         }
 
