@@ -1,4 +1,9 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
+using System.Net.Http.Headers;
+using System.Net.Http;
+using System.Text.RegularExpressions;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -208,7 +213,17 @@ namespace AutoTrackR2
                     );
                     ChangeLogo("/Assets/HIT.png");
                     break;
-                case 8: // VOX Theme
+                case 8: // WRAITH Theme
+                    UpdateThemeColors(
+                        (Color)ColorConverter.ConvertFromString("#ff0000"), // Accent/Border
+                        (Color)ColorConverter.ConvertFromString("#ce8946"), // Button
+                        (Color)ColorConverter.ConvertFromString("#000000"), // Background
+                        (Color)ColorConverter.ConvertFromString("#ce8946"), // Text
+                        (Color)ColorConverter.ConvertFromString("#A88F2C")  // AltText
+                    );
+                    ChangeLogo("/Assets/WRITH.png", (Color)ColorConverter.ConvertFromString("#ff0000"));
+                    break;
+                case 9: // VOX Theme
                     UpdateThemeColors(
                         (Color)ColorConverter.ConvertFromString("#C0C0C0"), // Accent/Border
                         (Color)ColorConverter.ConvertFromString("#1C1C1C"), // Button
@@ -218,7 +233,7 @@ namespace AutoTrackR2
                     );
                     ChangeLogo("/Assets/VOX.png", (Color)ColorConverter.ConvertFromString("#FFD700"));
                     break;
-                case 9: // EMP Theme
+                case 10: // EMP Theme
                     UpdateThemeColors(
                         (Color)ColorConverter.ConvertFromString("#F5721C"), // Accent/Border
                         (Color)ColorConverter.ConvertFromString("#535353"), // Button
@@ -403,6 +418,49 @@ namespace AutoTrackR2
 
             // Start the timer
             timer.Start();
+        }
+
+        private async void TestApiButton_Click(object sender, RoutedEventArgs e)
+        {
+            string apiUrl = ApiUrl.Text;
+            string modifiedUrl = Regex.Replace(apiUrl, @"(https?://[^/]+)/?.*", "$1/test");
+            string apiKey = ApiKey.Text;
+            Debug.WriteLine($"Sending to {modifiedUrl}");
+
+            try
+            {
+                // Configure HttpClient with TLS 1.2
+                var handler = new HttpClientHandler
+                {
+                    SslProtocols = System.Security.Authentication.SslProtocols.Tls12
+                };
+
+                using (var client = new HttpClient(handler))
+                {
+                    // Set headers
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+                    client.DefaultRequestHeaders.UserAgent.ParseAdd("AutoTrackR");
+
+                    // Empty JSON body
+                    var content = new StringContent("{}", Encoding.UTF8, "application/json");
+
+                    // Send POST
+                    var response = await client.PostAsync(modifiedUrl, content);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        MessageBox.Show("API Test Success.");
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Error: {response.StatusCode} - {response.ReasonPhrase}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"API Test Failure. {ex.Message}");
+            }
         }
     }
 }

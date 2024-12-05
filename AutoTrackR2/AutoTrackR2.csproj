@@ -16,6 +16,7 @@
     <None Remove="Assets\HIT.png" />
     <None Remove="Assets\NW.png" />
     <None Remove="Assets\VOX.png" />
+    <None Remove="Assets\WRITH.jpg" />
     <None Remove="Fonts\Orbitron-Bold.ttf" />
     <None Remove="Fonts\Roboto-Regular.ttf" />
     <None Remove="KillTrackR_MainScript.ps1" />
@@ -40,6 +41,9 @@
     </Resource>
     <Resource Include="Assets\VOX.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\WRITH.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Fonts\Orbitron-Bold.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

@@ -15,7 +15,7 @@ if (Test-Path $configFile) {
     # Convert to key-value pairs
     $config = $configContent -replace '^([^=]+)=(.+)$', '$1=$2' | ConvertFrom-StringData
 } else {
-    Write-Output "PlayerName=Config.ini not found."
+    Write-Output "Config.ini not found."
     exit
 }
 
@@ -49,17 +49,8 @@ if ($visorWipe -eq 1){
 If (Test-Path $logFilePath) {
 	Write-Output "PlayerName=Logfile found"
 } else {
-	Write-Output "PlayerName=Logfile not found."
+	Write-Output "Logfile not found."
 }
-
-$enemyPilot = "6lasphemous"
-$enemyShip = "MISC_Freelancer_MAX"
-$enemyOrgs = "GrieferNet"
-$joinDate = "12 Dec 2022"
-$citizenRecord = "237890"
-$KillTime = (Get-Date).ToUniversalTime().ToString("d MMM yyyy H:mm 'UTC'")
-
-Write-Output "NewKill=break,$enemyPilot,$enemyShip,$($enemyOrgs),$joinDate,$citizenRecord,$killTime"
 
 # Ship Manufacturers
 $prefixes = @(
@@ -215,7 +206,7 @@ function Read-LogEntry {
 				$ship = $ship -replace '_(PU|AI|CIV|MIL|PIR)$', ''
 			}
 
-			$KillTime = Get-Date([DateTime]::UtcNow) -UFormat "%d%b%Y %r"
+			$KillTime = (Get-Date).ToUniversalTime().ToString("d MMM yyyy H:mm 'UTC'")
 			$page1 = Invoke-WebRequest -uri "https://robertsspaceindustries.com/citizens/$enemyPilot"
 			$page2 = Invoke-WebRequest -uri "https://robertsspaceindustries.com/citizens/$enemyPilot/organizations"
 			
