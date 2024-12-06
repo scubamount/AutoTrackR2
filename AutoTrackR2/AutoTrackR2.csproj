@@ -12,6 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\AVSQN.png" />
     <None Remove="Assets\D3VL.png" />
     <None Remove="Assets\EMP.png" />
     <None Remove="Assets\HIT.png" />
@@ -30,6 +31,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\AVSQN.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\D3VL.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
