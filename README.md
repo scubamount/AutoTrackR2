@@ -14,12 +14,12 @@ Set a path to your clipping software to save kills automatically.
 Visor Wipe Integration:
 Automates visor wiping using an AutoHotkey script (visorwipe.ahk).
 Requires AutoHotkey v2.
-Script must be placed in C:\Users\<Username>\AppData\Local\AutoHotkey2\.
+Script must be placed in C:\Users\<Username>\AppData\Local\AutoTrackR2\.
 
 Video Record Integration:
 Customize the videorecord.ahk script for your specific video recording keybinds.
 Requires AutoHotkey v2.
-Script must be placed in C:\Users\<Username>\AppData\Local\AutoHotkey2\
+Script must be placed in C:\Users\<Username>\AppData\Local\AutoTrackR2\
 
 Offline Mode:
 Disables API submissions. The tool will still scrape and display information from the RobertsSpaceIndustries website for the profile of whomever you have killed.
@@ -42,12 +42,12 @@ Video Clipping Path (Optional):
 Set the directory where your clipping software saves kills.
 
 Visor Wipe Setup:
-Place visorwipe.ahk in C:\Users\<Username>\AppData\Local\AutoHotkey2\.
+Place visorwipe.ahk in C:\Users\<Username>\AppData\Local\AutoTrackR2\.
 AutoHotkey v2 is required.
 
 Video Recording Setup:
 Modify videorecord.ahk to use the keybinds of your video recording software.
-Place videorecord.ahk in C:\Users\<Username>\AppData\Local\AutoHotkey2\.
+Place videorecord.ahk in C:\Users\<Username>\AppData\Local\AutoTrackR2\.
 AutoHotkey v2 is required.
 
 Offline Mode:
