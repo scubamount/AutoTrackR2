@@ -205,186 +205,195 @@ function Read-LogEntry {
 		$weapon = $matches['Weapon']
 		$damageType = $matches['DamageType']
 		$ship = $global:loadOut
-	
-	If ($enemyShip -eq $global:lastKill){
-		$enemyShip = "Passenger"
-	} Else {
-		$global:lastKill = $enemyShip
-	}
 
-	If (($player -eq $global:userName -and $enemyPilot -ne $global:userName) -and ($enemyPilot -notlike "PU_*" -and $enemyPilot -notlike "NPC_*")){
-		If ($enemyShip -match $cleanupPattern){
-			$enemyShip = $matches[1]
-		}
-		If ($weapon -match $cleanupPattern){
-			$weapon = $matches[1]
-		}
-		If ($weapon -eq "KLWE_MassDriver_S10"){
-			$global:loadOut = "AEGS_Idris"
-			$ship = "AEGS_Idris"
-		}
-		if ($damageType -like "*bullet*") {
-			$ship = "Player"
-		}
-		If ($ship -match $cleanupPattern){
-			$ship = $matches[1]
-		}
-		if ($ship -notmatch $shipManPattern){
-			$ship = "Player"
-		}
-		If ($enemyShip -notmatch $shipManPattern) {
-			$enemyShip = "Player"
-		}
-			
-			# Repeatedly remove all suffixes
-			while ($enemyShip -match '_(PU|AI|CIV|MIL|PIR)$') {
-				$enemyShip = $enemyShip -replace '_(PU|AI|CIV|MIL|PIR)$', ''
-			}
-			# Repeatedly remove all suffixes
-			while ($ship -match '_(PU|AI|CIV|MIL|PIR)$') {
-				$ship = $ship -replace '_(PU|AI|CIV|MIL|PIR)$', ''
-			}
-
-			$KillTime = (Get-Date).ToUniversalTime().ToString("d MMM yyyy H:mm 'UTC'")
+		Try {
 			$page1 = Invoke-WebRequest -uri "https://robertsspaceindustries.com/citizens/$enemyPilot"
-			
-			# Get Enlisted Date
-			if ($($page1.content) -match $joinDatePattern) {
-				$joinDate = $matches[1]
-				$joinDate2 = $joinDate -replace ',', ''
-			} else {
-				$joinDate2 = "-"
-			}
+		} Catch {
+			$page1 = $null
+		}
 
-			# Check if there are any matches
-			$enemyOrgs = $page1.links[3].innerHTML
-
-			if ($null -eq $enemyOrgs) {
-				$enemyOrgs = "-"
-			}
-
-			# Get UEE Number
-			if ($($page1.content) -match $ueePattern) {
-				# The matched UEE Citizen Record number is in $matches[1]
-				$citizenRecord = $matches[1]
-			} else {
-				$citizenRecord = "-"
-			}
-			If ($citizenRecord -eq "n/a") {
-				$citizenRecordAPI = "-1"
-				$citizenRecord = "-"
+		If ($null -ne $page1){
+	
+			If ($enemyShip -eq $global:lastKill){
+				$enemyShip = "Passenger"
 			} Else {
-				$citizenRecordAPI = $citizenRecord
+				$global:lastKill = $enemyShip
 			}
 
-			# Get PFP
-			$victimPFP = "https://robertsspaceindustries.com$($page1.images[0].src)"
-
-			Write-Output "NewKill=throwaway,$enemyPilot,$enemyShip,$enemyOrgs,$joinDate2,$citizenRecord,$killTime,$victimPFP"
-
-			$GameMode = $GameMode.ToLower()
-			# Send to API
-			# Define the data to send
-			If ($null -ne $apiUrl -and $offlineMode -eq $false){
-				$data = @{
-					victim_ship		= $enemyShip
-					victim			= $enemyPilot
-					enlisted		= $joinDate
-					rsi				= $citizenRecordAPI
-					weapon			= $weapon
-					method			= $damageType
-					loadout_ship	= $ship
-					game_version	= $GameVersion
-					gamemode		= $GameMode
-					trackr_version	= $TrackRver
+			If ($player -eq $global:userName -and $enemyPilot -ne $global:userName){
+				If ($enemyShip -match $cleanupPattern){
+					$enemyShip = $matches[1]
 				}
-
-				# Headers which may or may not be necessary
-				$headers = @{
-					"Authorization" = "Bearer $apiKey"
-					"Content-Type" = "application/json"
-					"User-Agent" = "AutoTrackR2"
+				If ($weapon -match $cleanupPattern){
+					$weapon = $matches[1]
 				}
-
-				try {
-					# Send the POST request with JSON data
-					Invoke-RestMethod -Uri $apiURL -Method Post -Body ($data | ConvertTo-Json -Depth 5) -Headers $headers
-					$logMode = "API"
-				} catch {
-					# Catch and display errors
-					$apiError = $_
-					# Add to output file
-					$logMode = "Err-Local"
+				If ($weapon -eq "KLWE_MassDriver_S10"){
+					$global:loadOut = "AEGS_Idris"
+					$ship = "AEGS_Idris"
 				}
-			} Else {
-				$logMode = "Local"
-			}
+				if ($damageType -like "*bullet*") {
+					$ship = "Player"
+				}
+				If ($ship -match $cleanupPattern){
+					$ship = $matches[1]
+				}
+				if ($ship -notmatch $shipManPattern){
+					$ship = "Player"
+				}
+				If ($enemyShip -notmatch $shipManPattern) {
+					$enemyShip = "Player"
+				}
 			
-			# Define the output CSV path
-			$csvPath = "$scriptFolder\Kill-log.csv"
+				# Repeatedly remove all suffixes
+				while ($enemyShip -match '_(PU|AI|CIV|MIL|PIR)$') {
+					$enemyShip = $enemyShip -replace '_(PU|AI|CIV|MIL|PIR)$', ''
+				}
+				# Repeatedly remove all suffixes
+				while ($ship -match '_(PU|AI|CIV|MIL|PIR)$') {
+					$ship = $ship -replace '_(PU|AI|CIV|MIL|PIR)$', ''
+				}
 
-			# Create an object to hold the data
-			$killData = [PSCustomObject]@{
-				KillTime         = $killTime
-				EnemyPilot       = $enemyPilot
-				EnemyShip        = $enemyShip
-				Enlisted         = $joinDate2
-				RecordNumber     = $citizenRecord
-				OrgAffiliation   = $enemyOrgs
-				Player           = $player
-				Weapon           = $weapon
-				Ship             = $ship
-				Method           = $damageType
-				Mode             = $GameMode
-				GameVersion      = $GameVersion
-				TrackRver		 = $TrackRver
-				Logged			 = $logMode
-			}
-
-			# Export to CSV
-			if (-Not (Test-Path $csvPath)) {
-				# If file doesn't exist, create it with headers
-				$killData | Export-Csv -Path $csvPath -NoTypeInformation
-			} else {
-				# Append data to the existing file
-				$killData | Export-Csv -Path $csvPath -Append -NoTypeInformation
-			}
-
-			$sleeptimer = 10
-
-			# VisorWipe
-			If ($visorwipe -eq $true -and $enemyShip -ne "Passenger" -and $damageType -notlike "*Bullet*"){
-				# send keybind for visorwipe
-				start-sleep 1
-				$sleeptimer = $sleeptimer -1
-				&"$scriptFolder\visorwipe.ahk"
-			}
+				$KillTime = (Get-Date).ToUniversalTime().ToString("d MMM yyyy H:mm 'UTC'")
 			
-			# Record video
-			if ($recording -eq $true -and $enemyShip -ne "Passenger"){
-				# send keybind for windows game bar recording
-				Start-Sleep 2
-				$sleeptimer = $sleeptimer -9
-				&"$scriptFolder\videorecord.ahk"
-				Start-Sleep 7
+			
+				# Get Enlisted Date
+				if ($($page1.content) -match $joinDatePattern) {
+					$joinDate = $matches[1]
+					$joinDate2 = $joinDate -replace ',', ''
+				} else {
+					$joinDate2 = "-"
+				}
 
-				$latestFile = Get-ChildItem -Path $videoPath | Where-Object { -not $_.PSIsContainer } | Sort-Object CreationTime -Descending | Select-Object -First 1
-				# Check if the latest file is no more than 10 seconds old
-				if ($latestFile) {
-					$fileAgeInSeconds = (New-TimeSpan -Start $latestFile.CreationTime -End (Get-Date)).TotalSeconds
-					if ($fileAgeInSeconds -le 10) {
-						# Generate a timestamp in ddMMMyyyy-HH:mm format
-						$timestamp = (Get-Date).ToString("ddMMMyyyy-HHmm")
+				# Check if there are any matches
+				$enemyOrgs = $page1.links[3].innerHTML
+
+				if ($null -eq $enemyOrgs) {
+					$enemyOrgs = "-"
+				}
+
+				# Get UEE Number
+				if ($($page1.content) -match $ueePattern) {
+					# The matched UEE Citizen Record number is in $matches[1]
+					$citizenRecord = $matches[1]
+				} else {
+					$citizenRecord = "-"
+				}
+				If ($citizenRecord -eq "n/a") {
+					$citizenRecordAPI = "-1"
+					$citizenRecord = "-"
+				} Else {
+					$citizenRecordAPI = $citizenRecord
+				}
+
+				# Get PFP
+				$victimPFP = "https://robertsspaceindustries.com$($page1.images[0].src)"
+
+				Write-Output "NewKill=throwaway,$enemyPilot,$enemyShip,$enemyOrgs,$joinDate2,$citizenRecord,$killTime,$victimPFP"
+
+				$GameMode = $GameMode.ToLower()
+				# Send to API
+				# Define the data to send
+				If ($null -ne $apiUrl -and $offlineMode -eq $false){
+					$data = @{
+						victim_ship		= $enemyShip
+						victim			= $enemyPilot
+						enlisted		= $joinDate
+						rsi				= $citizenRecordAPI
+						weapon			= $weapon
+						method			= $damageType
+						loadout_ship	= $ship
+						game_version	= $GameVersion
+						gamemode		= $GameMode
+						trackr_version	= $TrackRver
+					}
+
+					# Headers which may or may not be necessary
+					$headers = @{
+						"Authorization" = "Bearer $apiKey"
+						"Content-Type" = "application/json"
+						"User-Agent" = "AutoTrackR2"
+					}
+
+					try {
+						# Send the POST request with JSON data
+						Invoke-RestMethod -Uri $apiURL -Method Post -Body ($data | ConvertTo-Json -Depth 5) -Headers $headers
+						$logMode = "API"
+					} catch {
+						# Catch and display errors
+						$apiError = $_
+						# Add to output file
+						$logMode = "Err-Local"
+					}
+				} Else {
+					$logMode = "Local"
+				}
+			
+				# Define the output CSV path
+				$csvPath = "$scriptFolder\Kill-log.csv"
+
+				# Create an object to hold the data
+				$killData = [PSCustomObject]@{
+					KillTime         = $killTime
+					EnemyPilot       = $enemyPilot
+					EnemyShip        = $enemyShip
+					Enlisted         = $joinDate2
+					RecordNumber     = $citizenRecord
+					OrgAffiliation   = $enemyOrgs
+					Player           = $player
+					Weapon           = $weapon
+					Ship             = $ship
+					Method           = $damageType
+					Mode             = $GameMode
+					GameVersion      = $GameVersion
+					TrackRver		 = $TrackRver
+					Logged			 = $logMode
+				}
+
+				# Export to CSV
+				if (-Not (Test-Path $csvPath)) {
+					# If file doesn't exist, create it with headers
+					$killData | Export-Csv -Path $csvPath -NoTypeInformation
+				} else {
+					# Append data to the existing file
+					$killData | Export-Csv -Path $csvPath -Append -NoTypeInformation
+				}
+
+				$sleeptimer = 10
+
+				# VisorWipe
+				If ($visorwipe -eq $true -and $enemyShip -ne "Passenger" -and $damageType -notlike "*Bullet*"){
+					# send keybind for visorwipe
+					start-sleep 1
+					$sleeptimer = $sleeptimer -1
+					&"$scriptFolder\visorwipe.ahk"
+				}
+			
+				# Record video
+				if ($recording -eq $true -and $enemyShip -ne "Passenger"){
+					# send keybind for windows game bar recording
+					Start-Sleep 2
+					$sleeptimer = $sleeptimer -9
+					&"$scriptFolder\videorecord.ahk"
+					Start-Sleep 7
+
+					$latestFile = Get-ChildItem -Path $videoPath | Where-Object { -not $_.PSIsContainer } | Sort-Object CreationTime -Descending | Select-Object -First 1
+					# Check if the latest file is no more than 10 seconds old
+					if ($latestFile) {
+						$fileAgeInSeconds = (New-TimeSpan -Start $latestFile.CreationTime -End (Get-Date)).TotalSeconds
+						if ($fileAgeInSeconds -le 10) {
+							# Generate a timestamp in ddMMMyyyy-HH:mm format
+							$timestamp = (Get-Date).ToString("ddMMMyyyy-HHmm")
         
-						# Extract the file extension to preserve it
-						$fileExtension = $latestFile.Extension
+							# Extract the file extension to preserve it
+							$fileExtension = $latestFile.Extension
 
-						# Rename the file, preserving the original file extension
-						Rename-Item -Path $latestFile.FullName -NewName "$enemyPilot.$enemyShip.$timestamp$fileExtension"
+							# Rename the file, preserving the original file extension
+							Rename-Item -Path $latestFile.FullName -NewName "$enemyPilot.$enemyShip.$timestamp$fileExtension"
+						} else {}
 					} else {}
-				} else {}
+				}
+				Start-Sleep $sleeptimer
 			}
-			Start-Sleep $sleeptimer
 		}
 	}
 
