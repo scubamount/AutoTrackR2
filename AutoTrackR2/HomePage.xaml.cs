@@ -284,6 +284,8 @@ namespace AutoTrackR2
             PilotNameTextBox.Text = string.Empty;
             PlayerShipTextBox.Text = string.Empty;
             GameModeTextBox.Text = string.Empty;
+            KillTallyTextBox.Text = string.Empty;
+            KillFeedStackPanel.Children.Clear();
         }
 
         private void AdjustFontSize(TextBlock textBlock)
