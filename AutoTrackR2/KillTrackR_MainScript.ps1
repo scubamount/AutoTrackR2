@@ -101,13 +101,13 @@ $global:killTally = 0
 
 
 # Load historic kills from csv
-$historicKills = Import-CSV "$scriptFolder\Kill-log.csv" | Sort-Object Descending
-Try{
+if (Test-Path "$scriptFolder\Kill-Log.csv") {
+	$historicKills = Import-CSV "$scriptFolder\Kill-log.csv" | Sort-Object Descending
 	foreach ($kill in $historicKills) {
 		Write-Output "NewKill=throwaway,$($kill.EnemyPilot),$($kill.EnemyShip),$($kill.OrgAffiliation),$($kill.Enlisted),$($kill.RecordNumber),$($kill.KillTime),$($kill.PFP)"
 		$global:killTally++
 	}
-} Catch {}
+}
 Write-Output "KillTally=$global:killTally"
 
 # Match and extract username from gamelog
