@@ -160,9 +160,15 @@ namespace AutoTrackR2
 
         private async Task<string> DownloadInstallerToDownloads(string url)
         {
-            // Get the path to the user's Downloads folder
-            string downloadsFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Downloads";
+            // Get the path to the user's Downloads folder (this works for OneDrive and other cloud storage setups)
+            string downloadsFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
             string installerPath = Path.Combine(downloadsFolder, "AutoTrackR2_Setup.msi");
+
+            // Ensure the downloads folder exists
+            if (!Directory.Exists(downloadsFolder))
+            {
+                throw new Exception($"Downloads folder not found at: {downloadsFolder}");
+            }
 
             using var client = new HttpClient();
             var response = await client.GetAsync(url);
@@ -179,8 +185,17 @@ namespace AutoTrackR2
         {
             try
             {
-                // Start the installer manually (this will let the user run it)
-                System.Diagnostics.Process.Start(installerPath);
+                // Prepare the command to run the .msi installer using msiexec
+                var processStartInfo = new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = "msiexec",
+                    Arguments = $"/i \"{installerPath}\" /norestart", // Silent install with no restart
+                    UseShellExecute = true, // Ensures that the process runs in the background
+                    CreateNoWindow = true    // Hides the command prompt window
+                };
+
+                // Start the process (this will run the installer)
+                System.Diagnostics.Process.Start(processStartInfo);
             }
             catch (Exception ex)
             {
