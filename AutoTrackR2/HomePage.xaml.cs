@@ -109,6 +109,12 @@ namespace AutoTrackR2
                                     GameModeTextBox.Text = gameMode;
                                     AdjustFontSize(GameModeTextBox);
                                 }
+                                else if (e.Data.Contains("KillTally="))
+                                {
+                                    string killTally = e.Data.Split('=')[1].Trim();
+                                    KillTallyTextBox.Text = killTally;
+                                    AdjustFontSize(KillTallyTextBox);
+                                }
                                 else if (e.Data.Contains("NewKill="))
                                 {
                                     // Parse the kill data

@@ -97,45 +97,18 @@ $ueePattern = '<p class="entry citizen-record">\s*<span class="label">UEE Citize
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $process = Get-Process | Where-Object {$_.Name -like "AutoTrackR2"}
-<#
-$enemyPilot = "feezydafox"
-$enemyShip = "AEGS_Gladius"
-$KillTime = (Get-Date).ToUniversalTime().ToString("d MMM yyyy H:mm 'UTC'")
-$page1 = Invoke-WebRequest -uri "https://robertsspaceindustries.com/citizens/$enemyPilot"
+$global:killTally = 0
 
-# Get Enlisted Date
-if ($($page1.content) -match $joinDatePattern) {
-	$joinDate = $matches[1]
-	$joinDate = $joinDate -replace ',', ''
-} else {
-	$joinDate = "-"
-}
 
-# Check if there are any matches
-$enemyOrgs = $page1.links[4].innerHTML
-
-if ($null -eq $enemyOrgs) {
-    $enemyOrgs = "-"
-}
-
-# Get UEE Number
-if ($($page1.content) -match $ueePattern) {
-	# The matched UEE Citizen Record number is in $matches[1]
-	$citizenRecord = $matches[1]
-} else {
-	$citizenRecord = "-"
-}
-If ($citizenRecord -eq "n/a") {
-	$citizenRecordAPI = "-1"
-	$citizenRecord = "-"
-} Else {
-	$citizenRecordAPI = $citizenRecord
-}
-# Get PFP
-$victimPFP = "https://robertsspaceindustries.com$($page1.images[0].src)"
-
-Write-Output "NewKill=break,$enemyPilot,$enemyShip,$enemyOrgs,$joinDate,$citizenRecord,$killTime,$victimPFP"
-#>
+# Load historic kills from csv
+$historicKills = Import-CSV "$scriptFolder\Kill-log.csv" | Sort-Object Descending
+Try{
+	foreach ($kill in $historicKills) {
+		Write-Output "NewKill=throwaway,$($kill.EnemyPilot),$($kill.EnemyShip),$($kill.OrgAffiliation),$($kill.Enlisted),$($kill.RecordNumber),$($kill.KillTime),$($kill.PFP)"
+		$global:killTally++
+	}
+} Catch {}
+Write-Output "KillTally=$global:killTally"
 
 # Match and extract username from gamelog
 Do {
@@ -296,6 +269,8 @@ function Read-LogEntry {
 					$victimPFP = $page1.images[0].src
 				}
 
+				$global:killTally++
+				Write-Output "KillTally=$global:killTally"
 				Write-Output "NewKill=throwaway,$enemyPilot,$enemyShip,$enemyOrgs,$joinDate2,$citizenRecord,$killTime,$victimPFP"
 
 				$GameMode = $GameMode.ToLower()
@@ -355,6 +330,7 @@ function Read-LogEntry {
 					GameVersion      = $GameVersion
 					TrackRver		 = $TrackRver
 					Logged			 = $logMode
+					PFP				 = $victimPFP
 				}
 
 				# Export to CSV

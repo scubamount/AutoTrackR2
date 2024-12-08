@@ -28,7 +28,7 @@
             <!-- Install Button -->
             <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Grid.Row="2" Grid.Column="2">
                 <Button x:Name="InstallButton" Content="Install Update" Width="150" Height="40" IsEnabled="False" 
-                    Click="InstallButton_Click"  Style="{StaticResource ButtonStyle}" FontFamily="{StaticResource Orbitron}"/>
+                    Click="InstallButton_Click"  Style="{StaticResource DisabledButtonStyle}" FontFamily="{StaticResource Orbitron}"/>
             </StackPanel>
         </Grid>
     </Grid>

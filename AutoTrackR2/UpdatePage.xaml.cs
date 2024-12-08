@@ -9,7 +9,7 @@ namespace AutoTrackR2
 {
     public partial class UpdatePage : UserControl
     {
-        private string currentVersion = "v2.0-beta.1";
+        private string currentVersion = "v2.0-beta.01";
         private string latestVersion;
 
         public UpdatePage()
@@ -33,6 +33,7 @@ namespace AutoTrackR2
                 if (IsNewVersionAvailable(currentVersion, latestVersion))
                 {
                     InstallButton.IsEnabled = true;
+                    InstallButton.Style = (Style)FindResource("ButtonStyle");
                 }
             }
             catch (Exception ex)
@@ -94,25 +95,25 @@ namespace AutoTrackR2
             try
             {
                 InstallButton.IsEnabled = false;
-                InstallButton.Content = "Installing...";
+                InstallButton.Content = "Preparing to Install...";
 
-                // Define the download URL
-                string downloadUrl = "https://github.com/BubbaGumpShrump/AutoTrackR2/releases/download/v2.0-beta.1/AutoTrackR2_Setup.msi";
+                // Get the download URL for the latest release
+                string downloadUrl = await GetLatestMsiDownloadUrlFromGitHub();
 
-                // Download the installer before closing the app
-                string installerPath = await DownloadInstaller(downloadUrl);
+                // Download the installer to the user's Downloads folder
+                string installerPath = await DownloadInstallerToDownloads(downloadUrl);
 
-                // Launch the installer after the download completes
+                // Launch the installer for manual installation
                 RunInstaller(installerPath);
 
-                // Gracefully close the app after starting the installer
+                // Gracefully close the app after launching the installer
                 Application.Current.Shutdown();
 
-                MessageBox.Show("Update installed successfully. Please restart the application.", "Update Installed", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Update installer has been downloaded. Please finish the installation manually.", "Update Ready", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to install update: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Failed to download and launch the installer: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {
@@ -121,39 +122,69 @@ namespace AutoTrackR2
             }
         }
 
-        private async Task<string> DownloadInstaller(string url)
+        private async Task<string> GetLatestMsiDownloadUrlFromGitHub()
         {
-            string tempFilePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "AutoTrackR2_Setup.msi");
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("User-Agent", "AutoTrackR2");
+
+            string repoOwner = "BubbaGumpShrump";
+            string repoName = "AutoTrackR2";
+
+            try
+            {
+                // Fetch the latest release info from GitHub
+                var url = $"https://api.github.com/repos/{repoOwner}/{repoName}/releases/latest";
+                var response = await client.GetStringAsync(url);
+
+                // Parse the JSON response
+                using var document = System.Text.Json.JsonDocument.Parse(response);
+                var root = document.RootElement;
+
+                // Find the .msi asset in the release
+                foreach (var asset in root.GetProperty("assets").EnumerateArray())
+                {
+                    string assetName = asset.GetProperty("name").GetString();
+                    if (assetName.EndsWith(".msi"))
+                    {
+                        return asset.GetProperty("browser_download_url").GetString();
+                    }
+                }
+
+                throw new Exception("No .msi file found in the latest release.");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error fetching the release data: {ex.Message}");
+            }
+        }
+
+        private async Task<string> DownloadInstallerToDownloads(string url)
+        {
+            // Get the path to the user's Downloads folder
+            string downloadsFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Downloads";
+            string installerPath = Path.Combine(downloadsFolder, "AutoTrackR2_Setup.msi");
 
             using var client = new HttpClient();
             var response = await client.GetAsync(url);
             response.EnsureSuccessStatusCode();
 
-            using var fs = new System.IO.FileStream(tempFilePath, System.IO.FileMode.Create);
+            // Write the downloaded content to the Downloads folder
+            using var fs = new FileStream(installerPath, FileMode.Create);
             await response.Content.CopyToAsync(fs);
 
-            return tempFilePath;
+            return installerPath;
         }
 
         private void RunInstaller(string installerPath)
         {
             try
             {
-                // Prepare the command to run the .msi installer using msiexec
-                var processStartInfo = new System.Diagnostics.ProcessStartInfo
-                {
-                    FileName = "msiexec",
-                    Arguments = $"/i \"{installerPath}\" /quiet /norestart",
-                    UseShellExecute = false, // Ensures that the process runs in the background
-                    CreateNoWindow = true    // Hides the command prompt window
-                };
-
-                // Start the process (this will run the installer)
-                System.Diagnostics.Process.Start(processStartInfo);
+                // Start the installer manually (this will let the user run it)
+                System.Diagnostics.Process.Start(installerPath);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to start the installer: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Failed to open the installer: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }
