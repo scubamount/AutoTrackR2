@@ -252,6 +252,11 @@ function Read-LogEntry {
 				while ($ship -match '_(PU|AI|CIV|MIL|PIR)$') {
 					$ship = $ship -replace '_(PU|AI|CIV|MIL|PIR)$', ''
 				}
+				while ($enemyShip -match '-00(1|2|3|4|5|6|7|8|9|0)$') {
+					$enemyShip = $enemyShip -replace '-00(1|2|3|4|5|6|7|8|9|0)$', ''
+				}while ($ship -match '-00(1|2|3|4|5|6|7|8|9|0)$') {
+					$ship = $ship -replace '-00(1|2|3|4|5|6|7|8|9|0)$', ''
+				}
 
 				$KillTime = (Get-Date).ToUniversalTime().ToString("d MMM yyyy H:mm 'UTC'")
 			
