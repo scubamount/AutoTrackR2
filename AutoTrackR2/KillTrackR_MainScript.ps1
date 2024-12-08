@@ -290,7 +290,11 @@ function Read-LogEntry {
 				}
 
 				# Get PFP
-				$victimPFP = "https://robertsspaceindustries.com$($page1.images[0].src)"
+				if ($page1.images[0].src -like "/media/*") {
+					$victimPFP = "https://robertsspaceindustries.com$($page1.images[0].src)"
+				} Else {
+					$victimPFP = $page1.images[0].src
+				}
 
 				Write-Output "NewKill=throwaway,$enemyPilot,$enemyShip,$enemyOrgs,$joinDate2,$citizenRecord,$killTime,$victimPFP"
 
