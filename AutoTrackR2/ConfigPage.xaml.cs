@@ -251,6 +251,16 @@ namespace AutoTrackR2
                     );
                     ChangeLogo("/Assets/AVSQN.png", (Color)ColorConverter.ConvertFromString("#3fbcff"));
                     break;
+                case 12: // HEX Theme
+                    UpdateThemeColors(
+                        (Color)ColorConverter.ConvertFromString("#39FF14"), // Accent/Border
+                        (Color)ColorConverter.ConvertFromString("#535353"), // Button
+                        (Color)ColorConverter.ConvertFromString("#000800"), // Background
+                        (Color)ColorConverter.ConvertFromString("#FFFFFF"), // Text
+                        (Color)ColorConverter.ConvertFromString("#CFFF04")  // AltText
+                    );
+                    ChangeLogo("/Assets/AVSQN.png", (Color)ColorConverter.ConvertFromString("#3fbcff"));
+                    break;
             }
         }
 

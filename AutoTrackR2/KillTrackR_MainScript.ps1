@@ -96,7 +96,7 @@ $joinDatePattern = '<span class="label">Enlisted</span>\s*<strong class="value">
 $ueePattern = '<p class="entry citizen-record">\s*<span class="label">UEE Citizen Record<\/span>\s*<strong class="value">#?(n\/a|\d+)<\/strong>\s*<\/p>'
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-
+$process = Get-Process | Where-Object {$_.Name -like "AutoTrackR2"}
 <#
 $enemyPilot = "feezydafox"
 $enemyShip = "AEGS_Gladius"
@@ -254,7 +254,6 @@ function Read-LogEntry {
 				}
 
 				$KillTime = (Get-Date).ToUniversalTime().ToString("d MMM yyyy H:mm 'UTC'")
-			
 			
 				# Get Enlisted Date
 				if ($($page1.content) -match $joinDatePattern) {
@@ -436,6 +435,7 @@ function Read-LogEntry {
 			Write-Output "PlayerShip=$global:loadOut"
 		}
 	}
+	if ($process)
 }
 
 # Monitor the log file and process new lines as they are added

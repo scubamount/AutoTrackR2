@@ -15,6 +15,7 @@
     <None Remove="Assets\AVSQN.png" />
     <None Remove="Assets\D3VL.png" />
     <None Remove="Assets\EMP.png" />
+    <None Remove="Assets\HEX.png" />
     <None Remove="Assets\HIT.png" />
     <None Remove="Assets\NW.png" />
     <None Remove="Assets\VOX.png" />
@@ -32,29 +33,30 @@
 
   <ItemGroup>
     <Resource Include="Assets\AVSQN.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory></CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\D3VL.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory></CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\EMP.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory></CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\GN.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory></CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\AutoTrackR.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory></CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\HEX.png" />
     <Resource Include="Assets\HIT.png" />
     <Resource Include="Assets\NW.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory></CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\VOX.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory></CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\WRITH.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory></CopyToOutputDirectory>
     </Resource>
     <Resource Include="config.ini" />
     <Resource Include="Fonts\Orbitron-Bold.ttf">
