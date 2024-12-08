@@ -96,9 +96,17 @@ namespace AutoTrackR2
                 InstallButton.IsEnabled = false;
                 InstallButton.Content = "Installing...";
 
-                // Download and install the latest version
-                string downloadUrl = await GetDownloadUrlFromGitHub();
-                await DownloadAndInstallUpdate(downloadUrl);
+                // Define the download URL
+                string downloadUrl = "https://github.com/BubbaGumpShrump/AutoTrackR2/releases/download/v2.0-beta.1/AutoTrackR2_Setup.msi";
+
+                // Download the installer before closing the app
+                string installerPath = await DownloadInstaller(downloadUrl);
+
+                // Launch the installer after the download completes
+                RunInstaller(installerPath);
+
+                // Gracefully close the app after starting the installer
+                Application.Current.Shutdown();
 
                 MessageBox.Show("Update installed successfully. Please restart the application.", "Update Installed", MessageBoxButton.OK, MessageBoxImage.Information);
             }
@@ -113,27 +121,7 @@ namespace AutoTrackR2
             }
         }
 
-        private async Task<string> GetDownloadUrlFromGitHub()
-        {
-            // Use the exact URL since we know it
-            return "https://github.com/BubbaGumpShrump/AutoTrackR2/releases/download/v2.0-beta.1/AutoTrackR2_Setup.msi";
-        }
-        private bool IsFileLocked(string filePath)
-        {
-            try
-            {
-                using (var fileStream = new System.IO.FileStream(filePath, System.IO.FileMode.Open, System.IO.FileAccess.ReadWrite, System.IO.FileShare.None))
-                {
-                    return false; // File is not locked
-                }
-            }
-            catch (IOException)
-            {
-                return true; // File is locked
-            }
-        }
-
-        private async Task DownloadAndInstallUpdate(string url)
+        private async Task<string> DownloadInstaller(string url)
         {
             string tempFilePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "AutoTrackR2_Setup.msi");
 
@@ -144,20 +132,24 @@ namespace AutoTrackR2
             using var fs = new System.IO.FileStream(tempFilePath, System.IO.FileMode.Create);
             await response.Content.CopyToAsync(fs);
 
-            // Wait for the system to release the file
-            await Task.Delay(2000); // Wait for 2 seconds
+            return tempFilePath;
+        }
 
-            // Check if the file is locked
-            if (IsFileLocked(tempFilePath))
-            {
-                MessageBox.Show("The installer file is locked by another process.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
+        private void RunInstaller(string installerPath)
+        {
             try
             {
-                // Launch the installer
-                System.Diagnostics.Process.Start(tempFilePath);
+                // Prepare the command to run the .msi installer using msiexec
+                var processStartInfo = new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = "msiexec",
+                    Arguments = $"/i \"{installerPath}\" /quiet /norestart",
+                    UseShellExecute = false, // Ensures that the process runs in the background
+                    CreateNoWindow = true    // Hides the command prompt window
+                };
+
+                // Start the process (this will run the installer)
+                System.Diagnostics.Process.Start(processStartInfo);
             }
             catch (Exception ex)
             {

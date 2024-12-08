@@ -198,8 +198,8 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:AutoTrackR2_Setup"
-        "ProductCode" = "8:{772D186F-E30D-4D2B-99F2-F246555558FA}"
-        "PackageCode" = "8:{5A6337B9-AA07-4C66-8796-160B93276023}"
+        "ProductCode" = "8:{108D4428-AB25-444D-90C2-E507EA3020D8}"
+        "PackageCode" = "8:{0EBFA2DB-5EEC-48A0-9212-E8C33A05CE53}"
         "UpgradeCode" = "8:{0B78A147-D0DE-4F72-8906-A62611787CA7}"
         "AspNetVersion" = "8:"
         "RestartWWWService" = "11:FALSE"
