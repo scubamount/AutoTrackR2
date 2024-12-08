@@ -338,8 +338,8 @@ function Read-LogEntry {
 					# If file doesn't exist, create it with headers
 					$killData | Export-Csv -Path $csvPath -NoTypeInformation
 				} else {
-					# Append data to the existing file
-					$killData | Export-Csv -Path $csvPath -Append -NoTypeInformation
+					# Append data to the existing file without adding headers
+					$killData | ConvertTo-Csv -NoTypeInformation | Select-Object -Skip 1 | Out-File -Append -Encoding utf8 -FilePath $csvPath
 				}
 
 				$sleeptimer = 10
