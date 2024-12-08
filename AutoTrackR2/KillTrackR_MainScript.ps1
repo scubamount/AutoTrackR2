@@ -435,7 +435,6 @@ function Read-LogEntry {
 			Write-Output "PlayerShip=$global:loadOut"
 		}
 	}
-	if ($process)
 }
 
 # Monitor the log file and process new lines as they are added
