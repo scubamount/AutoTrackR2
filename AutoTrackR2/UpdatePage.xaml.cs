@@ -128,17 +128,19 @@ namespace AutoTrackR2
             using var document = System.Text.Json.JsonDocument.Parse(response);
             var root = document.RootElement;
 
-            // Extract the browser download URL for the first asset
+            // Extract the assets array
             var assets = root.GetProperty("assets");
-            if (assets.GetArrayLength() > 0)
+            foreach (var asset in assets.EnumerateArray())
             {
-                var downloadUrl = assets[0].GetProperty("browser_download_url").GetString();
-                return downloadUrl;
+                // Look for a `.msi` asset
+                var name = asset.GetProperty("name").GetString();
+                if (name != null && name.EndsWith(".msi", StringComparison.OrdinalIgnoreCase))
+                {
+                    return asset.GetProperty("browser_download_url").GetString();
+                }
             }
-            else
-            {
-                throw new Exception("No assets found in the latest release.");
-            }
+
+            throw new Exception("No .msi installer found in the latest release assets.");
         }
 
         private async Task DownloadAndInstallUpdate(string url)

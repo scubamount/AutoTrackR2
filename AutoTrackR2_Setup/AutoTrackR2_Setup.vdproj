@@ -50,6 +50,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
             }
         }
         "Release"
@@ -190,8 +198,8 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:AutoTrackR2_Setup"
-        "ProductCode" = "8:{01D113D7-62EA-41EE-A06E-55A8D5DD1883}"
-        "PackageCode" = "8:{E1AF24CD-7A12-42A7-ABC0-6D3EDCDA6FF2}"
+        "ProductCode" = "8:{EFAF7F55-60EF-4945-8F33-90A4F528AD59}"
+        "PackageCode" = "8:{C60FD0A3-3782-47B2-A89B-EBAD286F0786}"
         "UpgradeCode" = "8:{0B78A147-D0DE-4F72-8906-A62611787CA7}"
         "AspNetVersion" = "8:"
         "RestartWWWService" = "11:FALSE"
