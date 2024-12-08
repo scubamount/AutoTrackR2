@@ -266,7 +266,7 @@ function Read-LogEntry {
 				if ($page1.images[0].src -like "/media/*") {
 					$victimPFP = "https://robertsspaceindustries.com$($page1.images[0].src)"
 				} Else {
-					$victimPFP = $page1.images[0].src
+					$victimPFP = "https://cdn.robertsspaceindustries.com/static/images/account/avatar_default_big.jpg"
 				}
 
 				$global:killTally++
