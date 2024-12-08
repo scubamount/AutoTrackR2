@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
@@ -8,7 +9,7 @@ namespace AutoTrackR2
 {
     public partial class UpdatePage : UserControl
     {
-        private string currentVersion = "v2.0-beta.0";
+        private string currentVersion = "v2.0-beta.1";
         private string latestVersion;
 
         public UpdatePage()
@@ -114,38 +115,27 @@ namespace AutoTrackR2
 
         private async Task<string> GetDownloadUrlFromGitHub()
         {
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Add("User-Agent", "AutoTrackR2");
-
-            // GitHub repo details
-            string repoOwner = "BubbaGumpShrump";
-            string repoName = "AutoTrackR2";
-
-            var url = $"https://api.github.com/repos/{repoOwner}/{repoName}/releases/latest";
-            var response = await client.GetStringAsync(url);
-
-            // Parse the JSON using System.Text.Json
-            using var document = System.Text.Json.JsonDocument.Parse(response);
-            var root = document.RootElement;
-
-            // Extract the assets array
-            var assets = root.GetProperty("assets");
-            foreach (var asset in assets.EnumerateArray())
+            // Use the exact URL since we know it
+            return "https://github.com/BubbaGumpShrump/AutoTrackR2/releases/download/v2.0-beta.1/AutoTrackR2_Setup.msi";
+        }
+        private bool IsFileLocked(string filePath)
+        {
+            try
             {
-                // Look for a `.msi` asset
-                var name = asset.GetProperty("name").GetString();
-                if (name != null && name.EndsWith(".msi", StringComparison.OrdinalIgnoreCase))
+                using (var fileStream = new System.IO.FileStream(filePath, System.IO.FileMode.Open, System.IO.FileAccess.ReadWrite, System.IO.FileShare.None))
                 {
-                    return asset.GetProperty("browser_download_url").GetString();
+                    return false; // File is not locked
                 }
             }
-
-            throw new Exception("No .msi installer found in the latest release assets.");
+            catch (IOException)
+            {
+                return true; // File is locked
+            }
         }
 
         private async Task DownloadAndInstallUpdate(string url)
         {
-            string tempFilePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "update.exe");
+            string tempFilePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "AutoTrackR2_Setup.msi");
 
             using var client = new HttpClient();
             var response = await client.GetAsync(url);
@@ -154,8 +144,25 @@ namespace AutoTrackR2
             using var fs = new System.IO.FileStream(tempFilePath, System.IO.FileMode.Create);
             await response.Content.CopyToAsync(fs);
 
-            // Launch the installer
-            System.Diagnostics.Process.Start(tempFilePath);
+            // Wait for the system to release the file
+            await Task.Delay(2000); // Wait for 2 seconds
+
+            // Check if the file is locked
+            if (IsFileLocked(tempFilePath))
+            {
+                MessageBox.Show("The installer file is locked by another process.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            try
+            {
+                // Launch the installer
+                System.Diagnostics.Process.Start(tempFilePath);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to start the installer: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }
