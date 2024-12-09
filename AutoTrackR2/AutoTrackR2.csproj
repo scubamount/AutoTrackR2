@@ -19,7 +19,7 @@
     <None Remove="Assets\HIT.png" />
     <None Remove="Assets\NW.png" />
     <None Remove="Assets\VOX.png" />
-    <None Remove="Assets\WRITH.jpg" />
+    <None Remove="Assets\WRITH.png" />
     <None Remove="config.ini" />
     <None Remove="Fonts\Orbitron-Bold.ttf" />
     <None Remove="Fonts\Roboto-Regular.ttf" />
@@ -59,7 +59,7 @@
     <Resource Include="Assets\VOX.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Assets\WRITH.jpg">
+    <Resource Include="Assets\WRITH.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="config.ini" />
