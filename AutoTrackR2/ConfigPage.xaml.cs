@@ -259,7 +259,7 @@ namespace AutoTrackR2
                         (Color)ColorConverter.ConvertFromString("#FFFFFF"), // Text
                         (Color)ColorConverter.ConvertFromString("#CFFF04")  // AltText
                     );
-                    ChangeLogo("/Assets/AVSQN.png", (Color)ColorConverter.ConvertFromString("#3fbcff"));
+                    ChangeLogo("/Assets/HEX.png", (Color)ColorConverter.ConvertFromString("#39FF14"));
                     break;
             }
         }

@@ -20,6 +20,8 @@ if (Test-Path $configFile) {
     exit
 }
 
+$parentApp = (Get-Process -Name AutoTrackR2).ID
+
 # Access config values
 $logFilePath = $config.Logfile
 $apiUrl = $config.ApiUrl
@@ -102,7 +104,7 @@ $global:killTally = 0
 
 # Load historic kills from csv
 if (Test-Path "$scriptFolder\Kill-Log.csv") {
-	$historicKills = Import-CSV "$scriptFolder\Kill-log.csv" | Sort-Object Descending
+	$historicKills = Import-CSV "$scriptFolder\Kill-log.csv" | Sort-Object -Property KillTime
 	foreach ($kill in $historicKills) {
 		Write-Output "NewKill=throwaway,$($kill.EnemyPilot),$($kill.EnemyShip),$($kill.OrgAffiliation),$($kill.Enlisted),$($kill.RecordNumber),$($kill.KillTime),$($kill.PFP)"
 		$global:killTally++
@@ -186,7 +188,11 @@ function Read-LogEntry {
 		}
 
 		If ($null -ne $page1){
-	
+			# Check if the Autotrackr2 process is running
+			if ($null -eq (Get-Process -ID $parentApp -ErrorAction SilentlyContinue)) {
+				Stop-Process -Id $PID -Force
+			}
+			
 			If ($enemyShip -eq $global:lastKill){
 				$enemyShip = "Passenger"
 			} Else {
@@ -299,7 +305,7 @@ function Read-LogEntry {
 
 					try {
 						# Send the POST request with JSON data
-						Invoke-RestMethod -Uri $apiURL -Method Post -Body ($data | ConvertTo-Json -Depth 5) -Headers $headers
+						$null = Invoke-RestMethod -Uri $apiURL -Method Post -Body ($data | ConvertTo-Json -Depth 5) -Headers $headers
 						$logMode = "API"
 					} catch {
 						# Catch and display errors
