@@ -25,9 +25,13 @@
                 <TextBlock x:Name="AvailableVersionText" Text="Checking..." FontSize="16" VerticalAlignment="Center" Foreground="{DynamicResource TextBrush}"/>
             </StackPanel>
 
+            <StackPanel Orientation="Horizontal" Margin="20" Grid.Row="2">
+                <TextBlock Text="Still a work in progress. Please uninstall current version before installing update." FontSize="16" Foreground="{DynamicResource TextBrush}" />
+            </StackPanel>
+
             <!-- Install Button -->
             <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Grid.Row="2" Grid.Column="2">
-                <Button x:Name="InstallButton" Content="Install Update" Width="150" Height="40" IsEnabled="False" 
+                <Button x:Name="InstallButton" Content="Download Update" Width="150" Height="40" IsEnabled="False" 
                     Click="InstallButton_Click"  Style="{StaticResource DisabledButtonStyle}" FontFamily="{StaticResource Orbitron}"/>
             </StackPanel>
         </Grid>
