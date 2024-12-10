@@ -189,7 +189,7 @@ namespace AutoTrackR2
                 var processStartInfo = new System.Diagnostics.ProcessStartInfo
                 {
                     FileName = "msiexec",
-                    Arguments = $"/i \"{installerPath}\" /norestart", // Silent install with no restart
+                    Arguments = $"/i \"{installerPath}\" /norestart REINSTALLMODE=amus", // Silent install with no restart
                     UseShellExecute = true, // Ensures that the process runs in the background
                     CreateNoWindow = true    // Hides the command prompt window
                 };

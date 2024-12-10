@@ -219,7 +219,7 @@ function Read-LogEntry {
 				if ($ship -notmatch $shipManPattern){
 					$ship = "Player"
 				}
-				If ($enemyShip -notmatch $shipManPattern) {
+				If ($enemyShip -notmatch $shipManPattern -or $enemyShip -notlike "Passenger" ) {
 					$enemyShip = "Player"
 				}
 			
@@ -359,7 +359,7 @@ function Read-LogEntry {
 				}
 			
 				# Record video
-				if ($recording -eq $true -and $enemyShip -ne "Passenger"){
+				if ($videoRecord -eq $true -and $enemyShip -ne "Passenger"){
 					# send keybind for windows game bar recording
 					Start-Sleep 2
 					$sleeptimer = $sleeptimer -9
@@ -367,10 +367,10 @@ function Read-LogEntry {
 					Start-Sleep 7
 
 					$latestFile = Get-ChildItem -Path $videoPath | Where-Object { -not $_.PSIsContainer } | Sort-Object CreationTime -Descending | Select-Object -First 1
-					# Check if the latest file is no more than 10 seconds old
+					# Check if the latest file is no more than 30 seconds old
 					if ($latestFile) {
 						$fileAgeInSeconds = (New-TimeSpan -Start $latestFile.CreationTime -End (Get-Date)).TotalSeconds
-						if ($fileAgeInSeconds -le 10) {
+						if ($fileAgeInSeconds -le 30) {
 							# Generate a timestamp in ddMMMyyyy-HH:mm format
 							$timestamp = (Get-Date).ToString("ddMMMyyyy-HHmm")
         
