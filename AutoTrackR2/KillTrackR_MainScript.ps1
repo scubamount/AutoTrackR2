@@ -219,7 +219,7 @@ function Read-LogEntry {
 				if ($ship -notmatch $shipManPattern){
 					$ship = "Player"
 				}
-				If ($enemyShip -notmatch $shipManPattern -or $enemyShip -notlike "Passenger" ) {
+				If ($enemyShip -notmatch $shipManPattern -and $enemyShip -notlike "Passenger" ) {
 					$enemyShip = "Player"
 				}
 			
