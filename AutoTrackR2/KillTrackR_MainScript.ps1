@@ -100,15 +100,15 @@ $ueePattern = '<p class="entry citizen-record">\s*<span class="label">UEE Citize
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $process = Get-Process | Where-Object {$_.Name -like "AutoTrackR2"}
 $global:killTally = 0
-$global:GameMode = ""
-$global:GameVersion = ""
 
 # Load historic kills from csv
 if (Test-Path "$scriptFolder\Kill-Log.csv") {
 	$historicKills = Import-CSV "$scriptFolder\Kill-log.csv"
 	foreach ($kill in $historicKills) {
-		Write-Output "NewKill=throwaway,$($kill.EnemyPilot),$($kill.EnemyShip),$($kill.OrgAffiliation),$($kill.Enlisted),$($kill.RecordNumber),$($kill.KillTime),$($kill.PFP)"
-		$global:killTally++
+		Try {
+			Write-Output "NewKill=throwaway,$($kill.EnemyPilot),$($kill.EnemyShip),$($kill.OrgAffiliation),$($kill.Enlisted),$($kill.RecordNumber),$($kill.KillTime), $($kill.PFP)"
+			$global:killTally++
+		} Catch {Write-Output "Error Loading Kill: $($kill.EnemyPilot)"}
 	}
 }
 Write-Output "KillTally=$global:killTally"
@@ -338,6 +338,13 @@ function Read-LogEntry {
 					TrackRver		 = $TrackRver
 					Logged			 = $logMode
 					PFP				 = $victimPFP
+				}
+
+				# Remove commas from all properties
+				foreach ($property in $killData.PSObject.Properties) {
+					if ($property.Value -is [string]) {
+						$property.Value = $property.Value -replace ',', ''
+					}
 				}
 
 				# Export to CSV
