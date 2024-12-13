@@ -1,4 +1,4 @@
-﻿$TrackRver = "2.0"
+﻿$TrackRver = "2.0r"
 
 # Path to the config file
 $appName = "AutoTrackR2"
@@ -100,11 +100,12 @@ $ueePattern = '<p class="entry citizen-record">\s*<span class="label">UEE Citize
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $process = Get-Process | Where-Object {$_.Name -like "AutoTrackR2"}
 $global:killTally = 0
-
+$global:GameMode = ""
+$global:GameVersion = ""
 
 # Load historic kills from csv
 if (Test-Path "$scriptFolder\Kill-Log.csv") {
-	$historicKills = Import-CSV "$scriptFolder\Kill-log.csv" | Sort-Object -Property KillTime
+	$historicKills = Import-CSV "$scriptFolder\Kill-log.csv"
 	foreach ($kill in $historicKills) {
 		Write-Output "NewKill=throwaway,$($kill.EnemyPilot),$($kill.EnemyShip),$($kill.OrgAffiliation),$($kill.Enlisted),$($kill.RecordNumber),$($kill.KillTime),$($kill.PFP)"
 		$global:killTally++
@@ -144,15 +145,15 @@ Do {
 		Write-Output "PlayerShip=$global:loadOut"
 
 		If ($line -match $versionPattern){
-			$GameVersion = $matches['gameversion']
+			$global:GameVersion = $matches['gameversion']
 		}
 		if ($line -match $acPattern){
-			$GameMode = "AC"
+			$global:GameMode = "AC"
 		}
 		if ($line -match $puPattern){
-			$GameMode = "PU"
+			$global:GameMode = "PU"
 		}
-		Write-Output "GameMode=$GameMode"
+		Write-Output "GameMode=$global:GameMode"
 
 	}
     # If no match found, print "Logged In: False"
@@ -237,7 +238,7 @@ function Read-LogEntry {
 					$ship = $ship -replace '-00(1|2|3|4|5|6|7|8|9|0)$', ''
 				}
 
-				$KillTime = (Get-Date).ToUniversalTime().ToString("d MMM yyyy H:mm 'UTC'")
+				$KillTime = (Get-Date).ToUniversalTime().ToString("dd MMM yyyy HH:mm 'UTC'")
 			
 				# Get Enlisted Date
 				if ($($page1.content) -match $joinDatePattern) {
@@ -279,7 +280,7 @@ function Read-LogEntry {
 				Write-Output "KillTally=$global:killTally"
 				Write-Output "NewKill=throwaway,$enemyPilot,$enemyShip,$enemyOrgs,$joinDate2,$citizenRecord,$killTime,$victimPFP"
 
-				$GameMode = $GameMode.ToLower()
+				$global:GameMode = $global:GameMode.ToLower()
 				# Send to API
 				# Define the data to send
 				If ($null -ne $apiUrl -and $offlineMode -eq $false){
@@ -291,8 +292,8 @@ function Read-LogEntry {
 						weapon			= $weapon
 						method			= $damageType
 						loadout_ship	= $ship
-						game_version	= $GameVersion
-						gamemode		= $GameMode
+						game_version	= $global:GameVersion
+						gamemode		= $global:GameMode
 						trackr_version	= $TrackRver
 					}
 
@@ -332,8 +333,8 @@ function Read-LogEntry {
 					Weapon           = $weapon
 					Ship             = $ship
 					Method           = $damageType
-					Mode             = $GameMode
-					GameVersion      = $GameVersion
+					Mode             = $global:GameMode
+					GameVersion      = $global:GameVersion
 					TrackRver		 = $TrackRver
 					Logged			 = $logMode
 					PFP				 = $victimPFP
@@ -405,12 +406,12 @@ function Read-LogEntry {
 
 	# Detect PU or AC
 	if ($line -match $puPattern) {
-		$GameMode = "PU"
-		Write-Output "GameMode=$GameMode"
+		$global:GameMode = "PU"
+		Write-Output "GameMode=$global:GameMode"
 	}
 	if ($line -match $acPattern) {
-		$GameMode = "AC"
-		Write-Output "GameMode=$GameMode"
+		$global:GameMode = "AC"
+		Write-Output "GameMode=$global:GameMode"
 	}
 
 	#Set loadout 
