@@ -1,4 +1,4 @@
-﻿$TrackRver = "2.0"
+﻿$TrackRver = "2.0r"
 
 # Path to the config file
 $appName = "AutoTrackR2"
@@ -19,6 +19,8 @@ if (Test-Path $configFile) {
     Write-Output "Config.ini not found."
     exit
 }
+
+$parentApp = (Get-Process -Name AutoTrackR2).ID
 
 # Access config values
 $logFilePath = $config.Logfile
@@ -97,45 +99,19 @@ $ueePattern = '<p class="entry citizen-record">\s*<span class="label">UEE Citize
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $process = Get-Process | Where-Object {$_.Name -like "AutoTrackR2"}
-<#
-$enemyPilot = "feezydafox"
-$enemyShip = "AEGS_Gladius"
-$KillTime = (Get-Date).ToUniversalTime().ToString("d MMM yyyy H:mm 'UTC'")
-$page1 = Invoke-WebRequest -uri "https://robertsspaceindustries.com/citizens/$enemyPilot"
+$global:killTally = 0
+$global:GameMode = ""
+$global:GameVersion = ""
 
-# Get Enlisted Date
-if ($($page1.content) -match $joinDatePattern) {
-	$joinDate = $matches[1]
-	$joinDate = $joinDate -replace ',', ''
-} else {
-	$joinDate = "-"
+# Load historic kills from csv
+if (Test-Path "$scriptFolder\Kill-Log.csv") {
+	$historicKills = Import-CSV "$scriptFolder\Kill-log.csv"
+	foreach ($kill in $historicKills) {
+		Write-Output "NewKill=throwaway,$($kill.EnemyPilot),$($kill.EnemyShip),$($kill.OrgAffiliation),$($kill.Enlisted),$($kill.RecordNumber),$($kill.KillTime),$($kill.PFP)"
+		$global:killTally++
+	}
 }
-
-# Check if there are any matches
-$enemyOrgs = $page1.links[4].innerHTML
-
-if ($null -eq $enemyOrgs) {
-    $enemyOrgs = "-"
-}
-
-# Get UEE Number
-if ($($page1.content) -match $ueePattern) {
-	# The matched UEE Citizen Record number is in $matches[1]
-	$citizenRecord = $matches[1]
-} else {
-	$citizenRecord = "-"
-}
-If ($citizenRecord -eq "n/a") {
-	$citizenRecordAPI = "-1"
-	$citizenRecord = "-"
-} Else {
-	$citizenRecordAPI = $citizenRecord
-}
-# Get PFP
-$victimPFP = "https://robertsspaceindustries.com$($page1.images[0].src)"
-
-Write-Output "NewKill=break,$enemyPilot,$enemyShip,$enemyOrgs,$joinDate,$citizenRecord,$killTime,$victimPFP"
-#>
+Write-Output "KillTally=$global:killTally"
 
 # Match and extract username from gamelog
 Do {
@@ -169,15 +145,15 @@ Do {
 		Write-Output "PlayerShip=$global:loadOut"
 
 		If ($line -match $versionPattern){
-			$GameVersion = $matches['gameversion']
+			$global:GameVersion = $matches['gameversion']
 		}
 		if ($line -match $acPattern){
-			$GameMode = "AC"
+			$global:GameMode = "AC"
 		}
 		if ($line -match $puPattern){
-			$GameMode = "PU"
+			$global:GameMode = "PU"
 		}
-		Write-Output "GameMode=$GameMode"
+		Write-Output "GameMode=$global:GameMode"
 
 	}
     # If no match found, print "Logged In: False"
@@ -213,7 +189,11 @@ function Read-LogEntry {
 		}
 
 		If ($null -ne $page1){
-	
+			# Check if the Autotrackr2 process is running
+			if ($null -eq (Get-Process -ID $parentApp -ErrorAction SilentlyContinue)) {
+				Stop-Process -Id $PID -Force
+			}
+			
 			If ($enemyShip -eq $global:lastKill){
 				$enemyShip = "Passenger"
 			} Else {
@@ -240,7 +220,7 @@ function Read-LogEntry {
 				if ($ship -notmatch $shipManPattern){
 					$ship = "Player"
 				}
-				If ($enemyShip -notmatch $shipManPattern) {
+				If ($enemyShip -notmatch $shipManPattern -and $enemyShip -notlike "Passenger" ) {
 					$enemyShip = "Player"
 				}
 			
@@ -258,7 +238,7 @@ function Read-LogEntry {
 					$ship = $ship -replace '-00(1|2|3|4|5|6|7|8|9|0)$', ''
 				}
 
-				$KillTime = (Get-Date).ToUniversalTime().ToString("d MMM yyyy H:mm 'UTC'")
+				$KillTime = (Get-Date).ToUniversalTime().ToString("dd MMM yyyy HH:mm 'UTC'")
 			
 				# Get Enlisted Date
 				if ($($page1.content) -match $joinDatePattern) {
@@ -290,11 +270,17 @@ function Read-LogEntry {
 				}
 
 				# Get PFP
-				$victimPFP = "https://robertsspaceindustries.com$($page1.images[0].src)"
+				if ($page1.images[0].src -like "/media/*") {
+					$victimPFP = "https://robertsspaceindustries.com$($page1.images[0].src)"
+				} Else {
+					$victimPFP = "https://cdn.robertsspaceindustries.com/static/images/account/avatar_default_big.jpg"
+				}
 
+				$global:killTally++
+				Write-Output "KillTally=$global:killTally"
 				Write-Output "NewKill=throwaway,$enemyPilot,$enemyShip,$enemyOrgs,$joinDate2,$citizenRecord,$killTime,$victimPFP"
 
-				$GameMode = $GameMode.ToLower()
+				$global:GameMode = $global:GameMode.ToLower()
 				# Send to API
 				# Define the data to send
 				If ($null -ne $apiUrl -and $offlineMode -eq $false){
@@ -306,8 +292,8 @@ function Read-LogEntry {
 						weapon			= $weapon
 						method			= $damageType
 						loadout_ship	= $ship
-						game_version	= $GameVersion
-						gamemode		= $GameMode
+						game_version	= $global:GameVersion
+						gamemode		= $global:GameMode
 						trackr_version	= $TrackRver
 					}
 
@@ -320,7 +306,7 @@ function Read-LogEntry {
 
 					try {
 						# Send the POST request with JSON data
-						Invoke-RestMethod -Uri $apiURL -Method Post -Body ($data | ConvertTo-Json -Depth 5) -Headers $headers
+						$null = Invoke-RestMethod -Uri $apiURL -Method Post -Body ($data | ConvertTo-Json -Depth 5) -Headers $headers
 						$logMode = "API"
 					} catch {
 						# Catch and display errors
@@ -347,10 +333,11 @@ function Read-LogEntry {
 					Weapon           = $weapon
 					Ship             = $ship
 					Method           = $damageType
-					Mode             = $GameMode
-					GameVersion      = $GameVersion
+					Mode             = $global:GameMode
+					GameVersion      = $global:GameVersion
 					TrackRver		 = $TrackRver
 					Logged			 = $logMode
+					PFP				 = $victimPFP
 				}
 
 				# Export to CSV
@@ -358,8 +345,8 @@ function Read-LogEntry {
 					# If file doesn't exist, create it with headers
 					$killData | Export-Csv -Path $csvPath -NoTypeInformation
 				} else {
-					# Append data to the existing file
-					$killData | Export-Csv -Path $csvPath -Append -NoTypeInformation
+					# Append data to the existing file without adding headers
+					$killData | ConvertTo-Csv -NoTypeInformation | Select-Object -Skip 1 | Out-File -Append -Encoding utf8 -FilePath $csvPath
 				}
 
 				$sleeptimer = 10
@@ -373,7 +360,7 @@ function Read-LogEntry {
 				}
 			
 				# Record video
-				if ($recording -eq $true -and $enemyShip -ne "Passenger"){
+				if ($videoRecord -eq $true -and $enemyShip -ne "Passenger"){
 					# send keybind for windows game bar recording
 					Start-Sleep 2
 					$sleeptimer = $sleeptimer -9
@@ -381,10 +368,10 @@ function Read-LogEntry {
 					Start-Sleep 7
 
 					$latestFile = Get-ChildItem -Path $videoPath | Where-Object { -not $_.PSIsContainer } | Sort-Object CreationTime -Descending | Select-Object -First 1
-					# Check if the latest file is no more than 10 seconds old
+					# Check if the latest file is no more than 30 seconds old
 					if ($latestFile) {
 						$fileAgeInSeconds = (New-TimeSpan -Start $latestFile.CreationTime -End (Get-Date)).TotalSeconds
-						if ($fileAgeInSeconds -le 10) {
+						if ($fileAgeInSeconds -le 30) {
 							# Generate a timestamp in ddMMMyyyy-HH:mm format
 							$timestamp = (Get-Date).ToString("ddMMMyyyy-HHmm")
         
@@ -419,12 +406,12 @@ function Read-LogEntry {
 
 	# Detect PU or AC
 	if ($line -match $puPattern) {
-		$GameMode = "PU"
-		Write-Output "GameMode=$GameMode"
+		$global:GameMode = "PU"
+		Write-Output "GameMode=$global:GameMode"
 	}
 	if ($line -match $acPattern) {
-		$GameMode = "AC"
-		Write-Output "GameMode=$GameMode"
+		$global:GameMode = "AC"
+		Write-Output "GameMode=$global:GameMode"
 	}
 
 	#Set loadout 

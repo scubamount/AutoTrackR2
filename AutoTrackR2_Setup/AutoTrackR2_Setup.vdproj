@@ -50,6 +50,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
             }
         }
         "Release"
@@ -190,24 +198,24 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:AutoTrackR2_Setup"
-        "ProductCode" = "8:{01D113D7-62EA-41EE-A06E-55A8D5DD1883}"
-        "PackageCode" = "8:{E1AF24CD-7A12-42A7-ABC0-6D3EDCDA6FF2}"
+        "ProductCode" = "8:{288819A9-947F-47BE-900E-205C7D7EAAF7}"
+        "PackageCode" = "8:{94C078B7-DD3E-4091-9F5E-780DE3481E1C}"
         "UpgradeCode" = "8:{0B78A147-D0DE-4F72-8906-A62611787CA7}"
         "AspNetVersion" = "8:"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
-        "DetectNewerInstalledVersion" = "11:TRUE"
+        "DetectNewerInstalledVersion" = "11:FALSE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:2.0"
+        "ProductVersion" = "8:2.0.2"
         "Manufacturer" = "8:GrieferNET"
         "ARPHELPTELEPHONE" = "8:"
-        "ARPHELPLINK" = "8:"
+        "ARPHELPLINK" = "8:discord.gg/griefernet"
         "Title" = "8:AutoTrackR2_Setup"
         "Subject" = "8:"
         "ARPCONTACT" = "8:Fisk"
         "Keywords" = "8:"
-        "ARPCOMMENTS" = "8:"
-        "ARPURLINFOABOUT" = "8:"
+        "ARPCOMMENTS" = "8:Star Citizen Kill Tracking App"
+        "ARPURLINFOABOUT" = "8:https://GrieferNET.org"
         "ARPPRODUCTICON" = "8:"
         "ARPIconIndex" = "3:0"
         "SearchPath" = "8:"
@@ -554,7 +562,7 @@
                             "Type" = "3:8"
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
-                            "Setting" = "3:1"
+                            "Setting" = "3:0"
                             "UsePlugInResources" = "11:TRUE"
                             }
                             "CopyrightWarning"
@@ -565,8 +573,8 @@
                             "Type" = "3:3"
                             "ContextData" = "8:"
                             "Attributes" = "3:0"
-                            "Setting" = "3:1"
-                            "Value" = "8:#1202"
+                            "Setting" = "3:2"
+                            "Value" = "8:GNU GENERAL PUBLIC LICENSE v3"
                             "DefaultValue" = "8:#1202"
                             "UsePlugInResources" = "11:TRUE"
                             }
