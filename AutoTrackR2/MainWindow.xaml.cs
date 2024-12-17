@@ -49,6 +49,18 @@ namespace AutoTrackR2
             InitializeConfigPage();
 
             UpdateTabVisuals();
+
+            Loaded += MainWindow_Loaded; // Handle Loaded event
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Check command-line arguments after the window is loaded
+            var args = Environment.GetCommandLineArgs();
+            if (args.Contains("-start", StringComparer.OrdinalIgnoreCase))
+            {
+                homePage.StartButton_Click(null, null);
+            }
         }
 
         private void CloseWindow(object sender, RoutedEventArgs e)

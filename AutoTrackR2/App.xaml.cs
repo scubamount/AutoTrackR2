@@ -10,5 +10,4 @@ namespace AutoTrackR2
     public partial class App : Application
     {
     }
-
 }

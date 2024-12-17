@@ -59,8 +59,9 @@ namespace AutoTrackR2
             }
         }
 
-        private void StartButton_Click(object sender, RoutedEventArgs e)
+        public void StartButton_Click(object sender, RoutedEventArgs e)
         {
+            UpdateButtonState(true);
             string scriptPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "KillTrackR_MainScript.ps1");
             TailFileAsync(scriptPath);
         }

@@ -1,4 +1,4 @@
-﻿$TrackRver = "2.0r"
+﻿$TrackRver = "2.03"
 
 # Path to the config file
 $appName = "AutoTrackR2"
