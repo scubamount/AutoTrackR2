@@ -91,7 +91,7 @@ $shipManPattern = "^(" + ($prefixes -join "|") + ")"
 # $loginPattern = "\[Notice\] <AccountLoginCharacterStatus_Character> Character: createdAt [A-Za-z0-9]+ - updatedAt [A-Za-z0-9]+ - geid [A-Za-z0-9]+ - accountId [A-Za-z0-9]+ - name (?<Player>[A-Za-z0-9_-]+) - state STATE_CURRENT" # KEEP THIS INCASE LEGACY LOGIN IS REMOVED 
 $loginPattern = "\[Notice\] <Legacy login response> \[CIG-net\] User Login Success - Handle\[(?<Player>[A-Za-z0-9_-]+)\]"
 $cleanupPattern = '^(.+?)_\d+$'
-$versionPattern = "--system-trace-env-id='pub-sc-alpha-(?<gameversion>\d{4}-\d{7})'"
+$versionPattern = "--system-trace-env-id='pub-sc-alpha-(?<gameversion>\d{3,4}-\d{7})'"
 
 # Lookup Patterns
 $joinDatePattern = '<span class="label">Enlisted</span>\s*<strong class="value">([^<]+)</strong>'

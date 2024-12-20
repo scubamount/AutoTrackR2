@@ -193,9 +193,9 @@ namespace AutoTrackR2
                     break;
                 case 6: // D3VL Theme
                     UpdateThemeColors(
-                        (Color)ColorConverter.ConvertFromString("#000000"), // Accent/Border
-                        (Color)ColorConverter.ConvertFromString("#3E3E3E"), // Button
-                        (Color)ColorConverter.ConvertFromString("#4C1C1C"), // Background
+                        (Color)ColorConverter.ConvertFromString("#4C1C1C"), // Accent/Border
+                        (Color)ColorConverter.ConvertFromString("#333333"), // Button
+                        (Color)ColorConverter.ConvertFromString("#AAAAAA"), // Background
                         (Color)ColorConverter.ConvertFromString("#FF0000"), // Text
                         (Color)ColorConverter.ConvertFromString("#A88F2C")  // AltText
                     );
