@@ -79,7 +79,8 @@ $prefixes = @(
     "ESPR",
     "KRIG",
     "GRIN",
-    "XNAA"
+    "XNAA",
+	"MRAI"
 )
 
 # Define the regex pattern to extract information
