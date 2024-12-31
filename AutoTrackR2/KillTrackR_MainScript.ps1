@@ -58,6 +58,9 @@ If (Test-Path $logFilePath) {
 	Write-Output "Logfile not found."
 }
 If ($null -ne $apiUrl){
+	if ($apiUrl -notlike "*/register-kill") {
+		$apiUrl = $apiUrl + "/register-kill"
+	}
 Write-output "PlayerName=$apiURL"
 }
 
@@ -250,7 +253,11 @@ function Read-LogEntry {
 				}
 
 				# Check if there are any matches
-				$enemyOrgs = $page1.links[3].innerHTML
+				If ($null -eq $page1.links[0].innerHTML) {
+					$enemyOrgs = $page1.links[4].innerHTML
+				} Else {
+					$enemyOrgs = $page1.links[3].innerHTML
+				}
 
 				if ($null -eq $enemyOrgs) {
 					$enemyOrgs = "-"
@@ -261,7 +268,7 @@ function Read-LogEntry {
 					# The matched UEE Citizen Record number is in $matches[1]
 					$citizenRecord = $matches[1]
 				} else {
-					$citizenRecord = "-"
+					$citizenRecord = "n/a"
 				}
 				If ($citizenRecord -eq "n/a") {
 					$citizenRecordAPI = "-1"
