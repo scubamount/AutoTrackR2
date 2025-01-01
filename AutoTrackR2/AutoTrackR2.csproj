@@ -13,11 +13,16 @@
 
   <ItemGroup>
     <None Remove="Assets\AVSQN.png" />
+    <None Remove="Assets\BOBGREL.png" />
+    <None Remove="Assets\chibifox.png" />
     <None Remove="Assets\D3VL.png" />
     <None Remove="Assets\EMP.png" />
     <None Remove="Assets\HEX.png" />
     <None Remove="Assets\HIT.png" />
+    <None Remove="Assets\MAMMON.png" />
+    <None Remove="Assets\NMOS.png" />
     <None Remove="Assets\NW.png" />
+    <None Remove="Assets\SHADOWMOSES.png" />
     <None Remove="Assets\VOX.png" />
     <None Remove="Assets\WRITH.png" />
     <None Remove="config.ini" />
@@ -31,7 +36,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\NMOS.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Assets\AVSQN.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\BOBGREL.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\chibifox.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\D3VL.png">
@@ -52,7 +69,13 @@
     <Resource Include="Assets\HIT.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\MAMMON.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\NW.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\SHADOWMOSES.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\VOX.png">

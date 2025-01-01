@@ -193,13 +193,13 @@ namespace AutoTrackR2
                     break;
                 case 6: // D3VL Theme
                     UpdateThemeColors(
-                        (Color)ColorConverter.ConvertFromString("#4C1C1C"), // Accent/Border
+                        (Color)ColorConverter.ConvertFromString("#AA0000"), // Accent/Border
                         (Color)ColorConverter.ConvertFromString("#333333"), // Button
-                        (Color)ColorConverter.ConvertFromString("#AAAAAA"), // Background
+                        (Color)ColorConverter.ConvertFromString("#220000"), // Background
                         (Color)ColorConverter.ConvertFromString("#FF0000"), // Text
                         (Color)ColorConverter.ConvertFromString("#A88F2C")  // AltText
                     );
-                    ChangeLogo("/Assets/D3VL.png", (Color)ColorConverter.ConvertFromString("#000000"));
+                    ChangeLogo("/Assets/D3VL.png", (Color)ColorConverter.ConvertFromString("#CC0000"));
                     break;
                 case 7: // HIT Theme
                     UpdateThemeColors(
@@ -214,10 +214,10 @@ namespace AutoTrackR2
                 case 8: // WRAITH Theme
                     UpdateThemeColors(
                         (Color)ColorConverter.ConvertFromString("#ff0000"), // Accent/Border
-                        (Color)ColorConverter.ConvertFromString("#ce8946"), // Button
-                        (Color)ColorConverter.ConvertFromString("#000000"), // Background
-                        (Color)ColorConverter.ConvertFromString("#ce8946"), // Text
-                        (Color)ColorConverter.ConvertFromString("#A88F2C")  // AltText
+                        (Color)ColorConverter.ConvertFromString("#2a2a2a"), // Button
+                        (Color)ColorConverter.ConvertFromString("#0a0a0a"), // Background
+                        (Color)ColorConverter.ConvertFromString("#DFDFDF"), // Text
+                        (Color)ColorConverter.ConvertFromString("#8B0000")  // AltText
                     );
                     ChangeLogo("/Assets/WRITH.png", (Color)ColorConverter.ConvertFromString("#ff0000"));
                     break;
@@ -260,6 +260,56 @@ namespace AutoTrackR2
                         (Color)ColorConverter.ConvertFromString("#CFFF04")  // AltText
                     );
                     ChangeLogo("/Assets/HEX.png", (Color)ColorConverter.ConvertFromString("#39FF14"));
+                    break;
+                case 13: // Mammon Theme
+                    UpdateThemeColors(
+                        (Color)ColorConverter.ConvertFromString("#FFD700"), // Accent/Border - Royal Gold
+                        (Color)ColorConverter.ConvertFromString("#2C2C2C"), // Button - Dark Gray
+                        (Color)ColorConverter.ConvertFromString("#1A1A1A"), // Background - Rich Black
+                        (Color)ColorConverter.ConvertFromString("#FFFFFF"), // Text - White
+                        (Color)ColorConverter.ConvertFromString("#DAA520")  // AltText - Golden Rod
+                    );
+                    ChangeLogo("/Assets/MAMMON.png", (Color)ColorConverter.ConvertFromString("#FFD700"));
+                    break;
+                case 14: // Shadow Moses Theme
+                    UpdateThemeColors(
+                        (Color)ColorConverter.ConvertFromString("#FF69B4"), // Accent/Border - Hot Pink
+                        (Color)ColorConverter.ConvertFromString("#2C2C2C"), // Button - Dark Gray
+                        (Color)ColorConverter.ConvertFromString("#2C1F28"), // Background - Dark Pink-Gray
+                        (Color)ColorConverter.ConvertFromString("#E6E6E6"), // Text - Light Gray
+                        (Color)ColorConverter.ConvertFromString("#FF1493")  // AltText - Deep Pink
+                    );
+                    ChangeLogo("/Assets/ShadowMoses.png", (Color)ColorConverter.ConvertFromString("#FF69B4"));
+                    break;
+                case 15: // Mongrel Squad
+                    UpdateThemeColors(
+                        (Color)ColorConverter.ConvertFromString("#00416A"), // Accent/Border - NyQuil Dark Blue
+                        (Color)ColorConverter.ConvertFromString("#1B3F5C"), // Button - Midnight Blue
+                        (Color)ColorConverter.ConvertFromString("#002E4D"), // Background - Deep NyQuil Blue
+                        (Color)ColorConverter.ConvertFromString("#B0C4DE"), // Text - Light Steel Blue
+                        (Color)ColorConverter.ConvertFromString("#4F94CD")  // AltText - Steel Blue
+                    );
+                    ChangeLogo("/Assets/Bobgrel.png", (Color)ColorConverter.ConvertFromString("#00BFFF"));
+                    break;
+                case 16: // Feezy
+                    UpdateThemeColors(
+                        (Color)ColorConverter.ConvertFromString("#FFA500"), // Accent/Border - Orange
+                        (Color)ColorConverter.ConvertFromString("#FFE4B5"), // Button - Moccasin
+                        (Color)ColorConverter.ConvertFromString("#FFF8DC"), // Background - Cornsilk
+                        (Color)ColorConverter.ConvertFromString("#8B4513"), // Text - Saddle Brown
+                        (Color)ColorConverter.ConvertFromString("#FF7F50")  // AltText - Coral
+                    );
+                    ChangeLogo("/Assets/chibifox.png", (Color)ColorConverter.ConvertFromString("#FFA500"));
+                    break;
+                case 17: // NMOS
+                    UpdateThemeColors(
+                        (Color)ColorConverter.ConvertFromString("#EAB787"), // Accent/Border
+                        (Color)ColorConverter.ConvertFromString("#601C1B"), // Button
+                        (Color)ColorConverter.ConvertFromString("#170402"), // Background
+                        (Color)ColorConverter.ConvertFromString("#F6DBAD"), // Text
+                        (Color)ColorConverter.ConvertFromString("#EBCAA0")  // AltText
+                    );
+                    ChangeLogo("/Assets/NMOS.png", (Color)ColorConverter.ConvertFromString("#EAB787"));
                     break;
             }
         }
