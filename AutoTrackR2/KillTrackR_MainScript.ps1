@@ -108,11 +108,19 @@ $global:killTally = 0
 # Load historic kills from csv
 if (Test-Path "$scriptFolder\Kill-Log.csv") {
 	$historicKills = Import-CSV "$scriptFolder\Kill-log.csv"
+	$currentDate = Get-Date
+	$dateFormat = "dd MMM yyyy HH:mm UTC"
 	foreach ($kill in $historicKills) {
+		$killDate = [datetime]::parseExact($kill.KillTime, $dateFormat, $null)
+		If ($killdate.year -eq $currentDate.Year -and $killdate.month -eq $currentDate.Month) {
+			$global:killTally++
+
+		}
 		Try {
 			Write-Output "NewKill=throwaway,$($kill.EnemyPilot),$($kill.EnemyShip),$($kill.OrgAffiliation),$($kill.Enlisted),$($kill.RecordNumber),$($kill.KillTime), $($kill.PFP)"
-			$global:killTally++
-		} Catch {Write-Output "Error Loading Kill: $($kill.EnemyPilot)"}
+		} Catch {
+			Write-Output "Error Loading Kill: $($kill.EnemyPilot)"
+		}
 	}
 }
 Write-Output "KillTally=$global:killTally"
@@ -198,7 +206,7 @@ function Read-LogEntry {
 				Stop-Process -Id $PID -Force
 			}
 			
-			If ($enemyShip -eq $global:lastKill){
+			If ($enemyShip -eq $global:lastKill -and $global:lastKill -ne "Player"){
 				$enemyShip = "Passenger"
 			} Else {
 				$global:lastKill = $enemyShip
@@ -217,6 +225,7 @@ function Read-LogEntry {
 				}
 				if ($damageType -like "*bullet*") {
 					$ship = "Player"
+					$enemyShip = "Player"
 				}
 				If ($ship -match $cleanupPattern){
 					$ship = $matches[1]

@@ -15,6 +15,12 @@ namespace AutoTrackR2
         public HomePage()
         {
             InitializeComponent();
+
+            // Get the current month
+            string currentMonth = DateTime.Now.ToString("MMMM", CultureInfo.InvariantCulture);
+
+            // Set the TextBlock text
+            KillTallyTitle.Text = $"Kill Tally - {currentMonth}";
         }
 
         private Process runningProcess; // Field to store the running process
