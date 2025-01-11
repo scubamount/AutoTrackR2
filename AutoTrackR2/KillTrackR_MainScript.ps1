@@ -114,7 +114,6 @@ if (Test-Path "$scriptFolder\Kill-Log.csv") {
 		$killDate = [datetime]::parseExact($kill.KillTime, $dateFormat, $null)
 		If ($killdate.year -eq $currentDate.Year -and $killdate.month -eq $currentDate.Month) {
 			$global:killTally++
-
 		}
 		Try {
 			Write-Output "NewKill=throwaway,$($kill.EnemyPilot),$($kill.EnemyShip),$($kill.OrgAffiliation),$($kill.Enlisted),$($kill.RecordNumber),$($kill.KillTime), $($kill.PFP)"
@@ -205,11 +204,12 @@ function Read-LogEntry {
 			if ($null -eq (Get-Process -ID $parentApp -ErrorAction SilentlyContinue)) {
 				Stop-Process -Id $PID -Force
 			}
-			
-			If ($enemyShip -eq $global:lastKill -and $global:lastKill -ne "Player"){
-				$enemyShip = "Passenger"
-			} Else {
-				$global:lastKill = $enemyShip
+			If ($enemyShip -ne "Player"){
+				If ($enemyShip -eq $global:lastKill){
+					$enemyShip = "Passenger"
+				} Else {
+					$global:lastKill = $enemyShip
+				}
 			}
 
 			If ($player -eq $global:userName -and $enemyPilot -ne $global:userName){
