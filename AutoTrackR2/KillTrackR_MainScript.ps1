@@ -223,7 +223,7 @@ function Read-LogEntry {
 					$global:loadOut = "AEGS_Idris"
 					$ship = "AEGS_Idris"
 				}
-				if ($damageType -like "*bullet*") {
+				if ($damageType -eq "Bullet") {
 					$ship = "Player"
 					$enemyShip = "Player"
 				}
