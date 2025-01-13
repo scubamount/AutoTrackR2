@@ -91,9 +91,9 @@
     <Resource Include="Fonts\Roboto-Regular.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <EmbeddedResource Include="KillTrackR_MainScript.ps1">
+    <Resource Include="KillTrackR_MainScript.ps1">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
+    </Resource>
   </ItemGroup>
 
 </Project>
