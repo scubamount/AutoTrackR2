@@ -59,7 +59,12 @@ If (Test-Path $logFilePath) {
 }
 If ($null -ne $apiUrl){
 	if ($apiUrl -notlike "*/register-kill") {
-		$apiUrl = $apiUrl + "/register-kill"
+		if ($apiUrl -like "*/"){
+			$apiUrl = $apiUrl + "register-kill"
+		}
+		if ($apiUrl -notlike "*/"){
+			$apiUrl = $apiUrl + "/register-kill"
+		}
 	}
 Write-output "PlayerName=$apiURL"
 }
