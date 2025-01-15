@@ -311,6 +311,26 @@ namespace AutoTrackR2
                     );
                     ChangeLogo("/Assets/NMOS.png", (Color)ColorConverter.ConvertFromString("#EAB787"));
                     break;
+                case 18: // Rakk Theme
+                    UpdateThemeColors(
+                        (Color)ColorConverter.ConvertFromString("#FF00FF"), // Accent/Border - Magenta
+                        (Color)ColorConverter.ConvertFromString("#1C1C1C"), // Button - Dark Gray
+                        (Color)ColorConverter.ConvertFromString("#0A0A0A"), // Background - Nearly Black
+                        (Color)ColorConverter.ConvertFromString("#E6E6E6"), // Text - Light Gray
+                        (Color)ColorConverter.ConvertFromString("#00BFFF")  // AltText - Deep Sky Blue
+                    );
+                    ChangeLogo("/Assets/RACKETEERS.png", (Color)ColorConverter.ConvertFromString("#FF00FF"));
+                    break;
+                case 19: // Blightveil Theme
+                    UpdateThemeColors(
+                        (Color)ColorConverter.ConvertFromString("#8B4AC6"), // Accent/Border - Purple from the logo border
+                        (Color)ColorConverter.ConvertFromString("#2A2035"), // Button - Darker purple for buttons
+                        (Color)ColorConverter.ConvertFromString("#1A1621"), // Background - Very dark purple/black
+                        (Color)ColorConverter.ConvertFromString("#FFFFFF"), // Text - White like the logo text
+                        (Color)ColorConverter.ConvertFromString("#FF3333")  // AltText - Red like the eyes
+                    );
+                    ChangeLogo("/Assets/Blightveil.png", (Color)ColorConverter.ConvertFromString("#8B4AC6"));
+                    break;
             }
         }
 
