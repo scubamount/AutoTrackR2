@@ -116,7 +116,7 @@ if (Test-Path "$scriptFolder\Kill-Log.csv") {
 	$currentDate = Get-Date
 	$dateFormat = "dd MMM yyyy HH:mm UTC"
 	foreach ($kill in $historicKills) {
-		$killDate = [datetime]::parseExact($kill.KillTime, $dateFormat, $null)
+		$killDate = [datetime]::ParseExact($kill.KillTime, $dateFormat, [System.Globalization.CultureInfo]::InvariantCulture)
 		If ($killdate.year -eq $currentDate.Year -and $killdate.month -eq $currentDate.Month) {
 			$global:killTally++
 		}
@@ -256,7 +256,7 @@ function Read-LogEntry {
 					$ship = $ship -replace '-00(1|2|3|4|5|6|7|8|9|0)$', ''
 				}
 
-				$KillTime = (Get-Date).ToUniversalTime().ToString("dd MMM yyyy HH:mm 'UTC'")
+				$KillTime = (Get-Date).ToUniversalTime().ToString("dd MMM yyyy HH:mm 'UTC'", [System.Globalization.CultureInfo]::InvariantCulture)
 			
 				# Get Enlisted Date
 				if ($($page1.content) -match $joinDatePattern) {
