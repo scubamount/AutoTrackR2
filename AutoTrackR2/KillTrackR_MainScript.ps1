@@ -1,4 +1,4 @@
-﻿$TrackRver = "2.05"
+﻿$TrackRver = "2.06"
 
 # Path to the config file
 $appName = "AutoTrackR2"
@@ -101,6 +101,12 @@ $shipManPattern = "^(" + ($prefixes -join "|") + ")"
 $loginPattern = "\[Notice\] <Legacy login response> \[CIG-net\] User Login Success - Handle\[(?<Player>[A-Za-z0-9_-]+)\]"
 $cleanupPattern = '^(.+?)_\d+$'
 $versionPattern = "--system-trace-env-id='pub-sc-alpha-(?<gameversion>\d{3,4}-\d{7})'"
+$vehiclePattern = "<(?<timestamp>[^>]+)> \[Notice\] <Vehicle Destruction> CVehicle::OnAdvanceDestroyLevel: " +
+    "Vehicle '(?<vehicle>[^']+)' \[\d+\] in zone '(?<vehicle_zone>[^']+)' " +
+    "\[pos x: (?<pos_x>[-\d\.]+), y: (?<pos_y>[-\d\.]+), z: (?<pos_z>[-\d\.]+) " +
+    "vel x: [^,]+, y: [^,]+, z: [^\]]+\] driven by '(?<driver>[^']+)' \[\d+\] " +
+    "advanced from destroy level (?<destroy_level_from>\d+) to (?<destroy_level_to>\d+) " +
+    "caused by '(?<caused_by>[^']+)' \[\d+\] with '(?<damage_type>[^']+)'"
 
 # Lookup Patterns
 $joinDatePattern = '<span class="label">Enlisted</span>\s*<strong class="value">([^<]+)</strong>'
@@ -187,6 +193,14 @@ function Read-LogEntry {
     param (
         [string]$line
     )
+
+    # Look for vehicle events
+    if ($line -match $vehiclePattern) {
+        # Access the named capture groups from the regex match
+        $global:vehicle_id = $matches['vehicle']
+        $global:location = $matches['vehicle_zone']
+
+    }
     
     # Apply the regex pattern to the line
     if ($line -match $killPattern) {
@@ -197,6 +211,15 @@ function Read-LogEntry {
 		$weapon = $matches['Weapon']
 		$damageType = $matches['DamageType']
 		$ship = $global:loadOut
+
+        If ($enemyShip -ne "vehicle_id"){
+            
+            $global:got_location = $location
+        }
+        else
+        {
+            $global:got_location = "NONE"
+        }
 
 		Try {
 			$page1 = Invoke-WebRequest -uri "https://robertsspaceindustries.com/citizens/$enemyPilot"
@@ -317,6 +340,7 @@ function Read-LogEntry {
 						game_version	= $global:GameVersion
 						gamemode		= $global:GameMode
 						trackr_version	= $TrackRver
+                        location        = $got_location
 					}
 
 					# Headers which may or may not be necessary
@@ -330,6 +354,7 @@ function Read-LogEntry {
 						# Send the POST request with JSON data
 						$null = Invoke-RestMethod -Uri $apiURL -Method Post -Body ($data | ConvertTo-Json -Depth 5) -Headers $headers
 						$logMode = "API"
+                        $global:got_location = "NONE"
 					} catch {
 						# Catch and display errors
 						$apiError = $_
