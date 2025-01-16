@@ -483,8 +483,37 @@ function Read-LogEntry {
 	}
 }
 
+<#
 # Monitor the log file and process new lines as they are added
 Get-Content -Path $logFilePath -Wait -Tail 0 | ForEach-Object {
     Read-LogEntry $_
 }
 #>
+
+# Open the log file with shared access for reading and writing
+$fileStream = [System.IO.FileStream]::new($logFilePath, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read, [System.IO.FileShare]::ReadWrite)
+$reader = [System.IO.StreamReader]::new($fileStream, [System.Text.Encoding]::UTF8)  # Ensure we're reading as UTF-8
+
+try {
+    # Move to the end of the file to start monitoring new entries
+    $reader.BaseStream.Seek(0, [System.IO.SeekOrigin]::End)
+
+    while ($true) {
+        # Read the next line from the file
+        $line = $reader.ReadLine()
+
+        # Ensure we have new content to process
+        if ($line) {
+            # Process the line (this is where your log entry handler would go)
+            Read-LogEntry $line
+        }
+
+        # Sleep for a brief moment to avoid high CPU usage
+        Start-Sleep -Milliseconds 100
+    }
+}
+finally {
+    # Ensure we close the reader and file stream properly when done
+    $reader.Close()
+    $fileStream.Close()
+}

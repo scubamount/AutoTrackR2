@@ -11,6 +11,7 @@ namespace AutoTrackR2
 {
     public partial class MainWindow : Window
     {
+
         private Dictionary<string, bool> tabStates = new Dictionary<string, bool>
         {
             { "HomeTab", true }, // HomeTab is selected by default
