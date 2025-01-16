@@ -331,6 +331,16 @@ namespace AutoTrackR2
                     );
                     ChangeLogo("/Assets/Blightveil.png", (Color)ColorConverter.ConvertFromString("#8B4AC6"));
                     break;
+                case 20: // Gankhub Theme
+                    UpdateThemeColors(
+                        (Color)ColorConverter.ConvertFromString("#ffa500"), // Accent/Border
+                        (Color)ColorConverter.ConvertFromString("#2C2C2C"), // Button
+                        (Color)ColorConverter.ConvertFromString("#1b1b1b"), // Background
+                        (Color)ColorConverter.ConvertFromString("#FFFFFF"), // Text
+                        (Color)ColorConverter.ConvertFromString("#ffa500")  // AltText
+                    );
+                    ChangeLogo("/Assets/Gankhub.png");
+                    break;
             }
         }
 

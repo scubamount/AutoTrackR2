@@ -19,6 +19,7 @@
     <None Remove="Assets\chibifox.png" />
     <None Remove="Assets\D3VL.png" />
     <None Remove="Assets\EMP.png" />
+    <None Remove="Assets\Gankhub.png" />
     <None Remove="Assets\HEX.png" />
     <None Remove="Assets\HIT.png" />
     <None Remove="Assets\MAMMON.png" />
@@ -39,6 +40,9 @@
 
   <ItemGroup>
     <Resource Include="Assets\BlightVeil.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Gankhub.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\NMOS.png">
