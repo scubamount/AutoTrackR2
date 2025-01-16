@@ -95,25 +95,22 @@ namespace AutoTrackR2
             try
             {
                 InstallButton.IsEnabled = false;
-                InstallButton.Content = "Preparing to Install...";
+                InstallButton.Content = "Preparing to Update...";
 
-                // Get the download URL for the latest release
-                string downloadUrl = await GetLatestMsiDownloadUrlFromGitHub();
+                // Get the path to the update.ps1 script
+                string scriptPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "update.ps1");
 
-                // Download the installer to the user's Downloads folder
-                string installerPath = await DownloadInstallerToDownloads(downloadUrl);
+                // Run the PowerShell script
+                RunPowerShellScript(scriptPath);
 
-                // Launch the installer for manual installation
-                RunInstaller(installerPath);
-
-                // Gracefully close the app after launching the installer
+                // Gracefully close the app after running the script
                 Application.Current.Shutdown();
 
-                MessageBox.Show("Update installer has been downloaded. Please finish the installation manually.", "Update Ready", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Update process has started. Please follow the instructions in the PowerShell script.", "Update Started", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to download and launch the installer: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Failed to run the update script: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {
@@ -122,84 +119,26 @@ namespace AutoTrackR2
             }
         }
 
-        private async Task<string> GetLatestMsiDownloadUrlFromGitHub()
-        {
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Add("User-Agent", "AutoTrackR2");
-
-            string repoOwner = "BubbaGumpShrump";
-            string repoName = "AutoTrackR2";
-
-            try
-            {
-                // Fetch the latest release info from GitHub
-                var url = $"https://api.github.com/repos/{repoOwner}/{repoName}/releases/latest";
-                var response = await client.GetStringAsync(url);
-
-                // Parse the JSON response
-                using var document = System.Text.Json.JsonDocument.Parse(response);
-                var root = document.RootElement;
-
-                // Find the .msi asset in the release
-                foreach (var asset in root.GetProperty("assets").EnumerateArray())
-                {
-                    string assetName = asset.GetProperty("name").GetString();
-                    if (assetName.EndsWith(".msi"))
-                    {
-                        return asset.GetProperty("browser_download_url").GetString();
-                    }
-                }
-
-                throw new Exception("No .msi file found in the latest release.");
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Error fetching the release data: {ex.Message}");
-            }
-        }
-
-        private async Task<string> DownloadInstallerToDownloads(string url)
-        {
-            // Get the path to the user's Downloads folder (this works for OneDrive and other cloud storage setups)
-            string downloadsFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
-            string installerPath = Path.Combine(downloadsFolder, "AutoTrackR2_Setup.msi");
-
-            // Ensure the downloads folder exists
-            if (!Directory.Exists(downloadsFolder))
-            {
-                throw new Exception($"Downloads folder not found at: {downloadsFolder}");
-            }
-
-            using var client = new HttpClient();
-            var response = await client.GetAsync(url);
-            response.EnsureSuccessStatusCode();
-
-            // Write the downloaded content to the Downloads folder
-            using var fs = new FileStream(installerPath, FileMode.Create);
-            await response.Content.CopyToAsync(fs);
-
-            return installerPath;
-        }
-
-        private void RunInstaller(string installerPath)
+        private void RunPowerShellScript(string scriptPath)
         {
             try
             {
-                // Prepare the command to run the .msi installer using msiexec
+                // Prepare the command to run the PowerShell script with elevation (admin rights)
                 var processStartInfo = new System.Diagnostics.ProcessStartInfo
                 {
-                    FileName = "msiexec",
-                    Arguments = $"/i \"{installerPath}\" /norestart REINSTALLMODE=amus", // Silent install with no restart
-                    UseShellExecute = true, // Ensures that the process runs in the background
-                    CreateNoWindow = true    // Hides the command prompt window
+                    FileName = "powershell.exe",
+                    Arguments = $"-ExecutionPolicy Bypass -File \"{scriptPath}\"", // Allow script to run
+                    Verb = "runas", // Request elevation (admin rights)
+                    UseShellExecute = true, // Use the shell to execute the process
+                    CreateNoWindow = false    // Show the PowerShell window
                 };
 
-                // Start the process (this will run the installer)
+                // Start the PowerShell process to run the script with admin rights
                 System.Diagnostics.Process.Start(processStartInfo);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to open the installer: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Failed to run the PowerShell script with admin rights: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }
