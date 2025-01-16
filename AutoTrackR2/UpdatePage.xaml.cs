@@ -9,7 +9,7 @@ namespace AutoTrackR2
 {
     public partial class UpdatePage : UserControl
     {
-        private string currentVersion = "v2.05-release";
+        private string currentVersion = "v2.06-test";
         private string latestVersion;
 
         public UpdatePage()
